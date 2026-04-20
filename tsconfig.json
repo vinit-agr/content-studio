@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["shared/*"],
+      "@theme/*": ["shared/theme/*"],
+      "@primitives": ["tools/remotion/src/primitives/index"],
+      "@primitives/*": ["tools/remotion/src/primitives/*"]
+    },
+    "types": ["node"]
+  },
+  "include": ["tools/**/*", "shared/**/*", "remotion.config.ts"],
+  "exclude": ["node_modules", "out", "repo-references", "dist"]
+}
