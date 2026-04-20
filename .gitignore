@@ -9,15 +9,15 @@ build/
 .remotion/
 
 # External repo references (cloned locally, not vendored)
-repo-references/
+repo-references/**
 !repo-references/.gitkeep
 !repo-references/README.md
 
-# Media assets — generated or large source files stay local
-shared/assets/audio/
-shared/assets/images/
-shared/assets/fonts/
-shared/assets/video/
+# Media assets — generated or large source files stay local (contents only)
+shared/assets/audio/**
+shared/assets/images/**
+shared/assets/fonts/**
+shared/assets/video/**
 !shared/assets/**/.gitkeep
 !shared/assets/**/README.md
 
