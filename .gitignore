@@ -1,0 +1,74 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output & renders (never commit binaries)
+out/
+dist/
+build/
+.remotion/
+
+# External repo references (cloned locally, not vendored)
+repo-references/
+!repo-references/.gitkeep
+!repo-references/README.md
+
+# Media assets — generated or large source files stay local
+shared/assets/audio/
+shared/assets/images/
+shared/assets/fonts/
+shared/assets/video/
+!shared/assets/**/.gitkeep
+!shared/assets/**/README.md
+
+# Per-project large outputs
+projects/**/sources/
+projects/**/renders/
+projects/**/thumbnail/*.png
+projects/**/thumbnail/*.jpg
+projects/**/thumbnail/*.jpeg
+
+# AI generation caches
+tools/ai-gen/**/cache/
+tools/ai-gen/**/output/
+tools/ai-gen/**/.cache/
+
+# FFmpeg intermediates
+tools/ffmpeg/**/tmp/
+
+# Media file extensions (belt-and-suspenders)
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.m4a
+*.psd
+*.ai
+
+# Editor project files (usually large binary)
+*.drp
+*.prproj
+*.fcpbundle
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# OS & editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
