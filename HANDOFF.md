@@ -21,13 +21,13 @@ The new session will **continue at "Open Questions"** below — all earlier deci
 
 ## What we're building
 
-A personal **content studio** — a single repo that holds *all* tooling for producing videos
+A personal **content studio** — a single repo that holds _all_ tooling for producing videos
 and motion-graphics content, designed to outlive any one source project.
 
 - **Primary use case today:** producing technical/explainer videos for YouTube about ideas
   from various code repositories the user works on. First subject: the `cx-agent-evals` RAG
   evaluation system.
-- **Long-term:** a mini studio. Remotion is just *one* tool. Future tools include FFmpeg
+- **Long-term:** a mini studio. Remotion is just _one_ tool. Future tools include FFmpeg
   (stitching/transcoding), AI image/video generators (Replicate, Google Veo, Nano Banana, etc.),
   and external video-editor project files (DaVinci Resolve / Premiere).
 - **Reusable across source repos.** Each source project (cx-agent-evals, future projects) is
@@ -41,15 +41,18 @@ and motion-graphics content, designed to outlive any one source project.
 These are **locked**. Don't re-litigate in the new session unless something concrete forces a change.
 
 ### 1. Video formats — both clip library and full videos
+
 - Short reusable B-roll snippets (5–20s loops) AND full standalone explainer videos (1–3 min).
 - The clip library feeds the full videos.
 
 ### 2. Audience and distribution
+
 - **Primary:** technical developers, posted on the user's YouTube channel.
 - **Format:** 16:9 landscape, 1920×1080.
 - **Secondary (later):** product/marketing-oriented content.
 
 ### 3. Pilot video
+
 - **Title (working):** "Chunk vs span: why character-level evaluation matters"
 - **Length:** ~60–90 seconds
 - **Source repo:** cx-agent-evals
@@ -60,11 +63,13 @@ These are **locked**. Don't re-litigate in the new session unless something conc
   output → log), substantive enough to exercise theme tokens, primitives, and narration.
 
 ### 4. Repo strategy — standalone, not nested
+
 - The studio is its **own Git repo**, not a folder inside `cx-agent-evals`.
 - Source repos are pulled into `repo-references/` (gitignored) so the studio itself stays clean.
 - The studio's name is provisional — `content-studio` is a working title; the user may rename.
 
 ### 5. Tooling philosophy — Remotion first, but tool-pluralist
+
 - Remotion is the **first** tool, fully built out for the pilot.
 - Other tools (`ai-gen/`, `ffmpeg/`, `editor/`) get **placeholder folders with READMEs only**
   on day one — the convention exists, but no code yet (YAGNI).
@@ -140,15 +145,17 @@ content-studio/                # the new standalone repo
 ```
 
 **Key boundaries to preserve:**
+
 - `projects/` is tool-agnostic. A project's `storyboard.md` can say "Scene 1 = Remotion comp X,
   Scene 2 = Veo clip Y, Scene 3 = Nano Banana image with caption overlay." `timeline.json`
   declares the final assembly; FFmpeg stitches it.
 - `shared/theme/` is the single source of truth across tools — Remotion compositions, FFmpeg
   overlays, and AI-gen prompts all reference one palette so output looks consistent.
 - The studio **never imports code from a referenced repo**. Code in `repo-references/` is for
-  Claude/the human to read for context only. Sample data is *copied* into `shared/assets/data/`.
+  Claude/the human to read for context only. Sample data is _copied_ into `shared/assets/data/`.
 
 ### 7. Workspace and packaging
+
 - Single npm/pnpm package at the repo root. All tool deps go in one `package.json`.
 - If a tool ever has heavy or conflicting deps, it can be promoted to a sub-package later.
 - The Remotion config points to `tools/remotion/src/index.ts`.
@@ -165,20 +172,20 @@ mirror them as TypeScript constants.
 ```ts
 // shared/theme/colors.ts (target)
 export const colors = {
-  bg:            '#0c0c0f',
-  bgElevated:    '#141419',
-  bgSurface:     '#1a1a22',
-  bgHover:       '#22222d',
-  border:        '#2a2a36',
-  borderBright:  '#3a3a4a',
-  text:          '#e8e8ed',
-  textMuted:     '#8888a0',
-  textDim:       '#55556a',
-  accent:        '#6ee7b7',  // mint green — primary brand color
-  accentDim:     '#2d6b54',
-  accentBright:  '#a7f3d0',
-  warn:          '#fbbf24',
-  error:         '#f87171',
+  bg: '#0c0c0f',
+  bgElevated: '#141419',
+  bgSurface: '#1a1a22',
+  bgHover: '#22222d',
+  border: '#2a2a36',
+  borderBright: '#3a3a4a',
+  text: '#e8e8ed',
+  textMuted: '#8888a0',
+  textDim: '#55556a',
+  accent: '#6ee7b7', // mint green — primary brand color
+  accentDim: '#2d6b54',
+  accentBright: '#a7f3d0',
+  warn: '#fbbf24',
+  error: '#f87171',
   // chunk highlight colors (used to color individual chunks/spans)
   chunk1: '#6ee7b780',
   chunk2: '#818cf880',
@@ -193,6 +200,7 @@ JetBrains Mono. Body text 13px @ line-height 1.6 in the app — videos can scale
 
 **Existing keyframe animations in the app** (worth porting to `shared/theme/easings.ts` or as
 primitive components):
+
 - `fade-in` — 0.3s ease-out, opacity + translateY(6px → 0)
 - `slide-in` — 0.25s ease-out, opacity + translateX(-8px → 0)
 - `pulse-dot` — 1.4s ease-in-out infinite, opacity 0.4 ↔ 1.0
@@ -211,6 +219,7 @@ This is the founding storyboard sketch for the pilot. Refine in the new session.
 honest signal than chunk-level for RAG retrieval quality.
 
 **Rough scenes (~60–90s total):**
+
 1. **Intro (5s):** title card "Chunk vs Span" with mint accent, dark bg, JetBrains Mono.
 2. **The document (10s):** show a paragraph of text fading in, character by character or
    word by word.
@@ -233,6 +242,7 @@ recall/precision. Lean on visual metaphor, not jargon.
 The new session should pick up here. **One question at a time, multiple-choice when possible.**
 
 ### Q5. `repo-references/` mechanism
+
 How are external repos pulled into the studio for Claude/human context?
 
 - **A. Plain `git clone` into a gitignored `repo-references/` folder.** Maximum simplicity.
@@ -246,18 +256,20 @@ How are external repos pulled into the studio for Claude/human context?
   if 5+ source repos eventually.
 
 ### Q6. Theme sync from referenced repo
+
 For cx-agent-evals videos, `shared/theme/colors.ts` mirrors the frontend's `globals.css`. How
 do they stay in sync?
 
 - **A. Manual copy.** Update `colors.ts` by hand when the frontend palette changes. Trivial,
   drifts silently.
 - **B. A `pnpm theme:sync cx-agent-evals` script** that reads `repo-references/cx-agent-evals/
-  packages/frontend/src/app/globals.css` and regenerates `shared/theme/colors.ts`. Reproducible.
+packages/frontend/src/app/globals.css` and regenerates `shared/theme/colors.ts`. Reproducible.
 - **C. Per-project theme files** (`shared/theme/projects/cx-agent-evals.ts`) so each source
   repo gets its own palette module. Works well as you add more source projects.
 - **D. Combine B + C.** Sync script writes per-project theme files. Recommended for the long run.
 
 ### Q7. Work-log format
+
 Three options on the table:
 
 - **A. Dated narrative entries** (`log/2026-04-20-pilot-kickoff.md`) PLUS per-project files
@@ -267,6 +279,7 @@ Three options on the table:
 - **C. Per-project only.** Loses cross-project chronology.
 
 ### Q8. Project naming convention
+
 `projects/cx-agent-evals--chunk-vs-span/` uses `<source-repo>--<video-slug>`. Alternatives:
 
 - **A. Keep as-is** — explicit source-repo prefix. Recommended.
@@ -274,6 +287,7 @@ Three options on the table:
 - **C. Flat slug** — `projects/chunk-vs-span/`. Simpler when source repo is obvious from context.
 
 ### Q9. Audio / narration approach
+
 For the pilot:
 
 - **A. Recorded human voiceover** (the user records narration).
@@ -282,12 +296,15 @@ For the pilot:
 - **D. Decide later** — ship pilot with captions only, add narration in a follow-up render.
 
 ### Q10. Render output strategy
+
 - Where do final MP4s go? (Local `out/` only, or also pushed to S3/Cloudflare R2 for sharing?)
 - Codec defaults? (H.264 1080p30 is the safe pick for YouTube.)
 - Thumbnails: rendered as a separate Remotion composition vs designed in Figma/Affinity?
 
 ### Q11. Initial dependencies to install
+
 On approval of structure:
+
 - `remotion`, `@remotion/cli`, `@remotion/google-fonts` (Remotion core)
 - `react`, `react-dom`
 - `typescript`, `@types/node`, `@types/react`
@@ -296,6 +313,7 @@ On approval of structure:
 Confirm before installing.
 
 ### Q12. Studio repo name
+
 Working title: `content-studio`. Possible alternatives: `studio`, `motion`, `videos`,
 `<username>-studio`. User to decide.
 
@@ -331,4 +349,3 @@ Paste this verbatim into a fresh Claude Code session in the new content-studio r
 - Source repo at time of brainstorm: cx-agent-evals (worktree branch `va_video_with_remotion`)
 - Source frontend reference: `packages/frontend/src/app/globals.css`
 - Brainstorming skill version: superpowers 5.0.7
-

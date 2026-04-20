@@ -34,6 +34,7 @@ All working-directory paths in this plan are relative to `/Users/vinit/Tars/Cont
 ## Task 1: Bootstrap package.json + install dependencies
 
 **Files:**
+
 - Create: `package.json`
 
 - [ ] **Step 1: Write `package.json`**
@@ -108,6 +109,7 @@ git commit -m "chore: add package.json and install Remotion 4.x + toolchain"
 ## Task 2: TypeScript configuration
 
 **Files:**
+
 - Create: `tsconfig.base.json`
 - Create: `tsconfig.json`
 
@@ -177,6 +179,7 @@ git commit -m "chore: add TypeScript config (strict ESM + path aliases)"
 ## Task 3: Prettier and ESLint (flat config)
 
 **Files:**
+
 - Create: `.prettierrc`
 - Create: `.prettierignore`
 - Create: `eslint.config.js`
@@ -252,6 +255,7 @@ git commit -m "chore: add Prettier and ESLint flat-config"
 ## Task 4: Remotion config with webpack aliases
 
 **Files:**
+
 - Create: `remotion.config.ts`
 
 - [ ] **Step 1: Write `remotion.config.ts`**
@@ -302,6 +306,7 @@ git commit -m "chore: add Remotion config with 1080p30 H.264 + webpack aliases"
 ## Task 5: Theme types
 
 **Files:**
+
 - Create: `shared/theme/types.ts`
 
 - [ ] **Step 1: Write the theme type**
@@ -348,9 +353,10 @@ git commit -m "feat(theme): add Theme type + ChunkIndex"
 
 ## Task 6: Base palette (`defaultTheme`)
 
-The base palette is intentionally *different* from the cx-agent-evals palette so the override pattern actually overrides something. `defaultTheme` uses a neutral cyan accent; cx-agent-evals uses HANDOFF's mint accent (Task 9).
+The base palette is intentionally _different_ from the cx-agent-evals palette so the override pattern actually overrides something. `defaultTheme` uses a neutral cyan accent; cx-agent-evals uses HANDOFF's mint accent (Task 9).
 
 **Files:**
+
 - Create: `shared/theme/colors.ts`
 
 - [ ] **Step 1: Write `defaultTheme`**
@@ -360,20 +366,20 @@ The base palette is intentionally *different* from the cx-agent-evals palette so
 import type { Theme } from './types';
 
 export const defaultTheme = {
-  bg:           '#0c0c0f',
-  bgElevated:   '#141419',
-  bgSurface:    '#1a1a22',
-  bgHover:      '#22222d',
-  border:       '#2a2a36',
+  bg: '#0c0c0f',
+  bgElevated: '#141419',
+  bgSurface: '#1a1a22',
+  bgHover: '#22222d',
+  border: '#2a2a36',
   borderBright: '#3a3a4a',
-  text:         '#e8e8ed',
-  textMuted:    '#8888a0',
-  textDim:      '#55556a',
-  accent:       '#38bdf8',
-  accentDim:    '#0c4a6e',
+  text: '#e8e8ed',
+  textMuted: '#8888a0',
+  textDim: '#55556a',
+  accent: '#38bdf8',
+  accentDim: '#0c4a6e',
   accentBright: '#7dd3fc',
-  warn:         '#fbbf24',
-  error:        '#f87171',
+  warn: '#fbbf24',
+  error: '#f87171',
   chunks: ['#38bdf880', '#818cf880', '#fbbf2480', '#f472b680', '#6ee7b780'] as const,
 } as const satisfies Theme;
 ```
@@ -398,6 +404,7 @@ git commit -m "feat(theme): add defaultTheme (neutral cyan base palette)"
 ## Task 7: Fonts loader
 
 **Files:**
+
 - Create: `shared/theme/fonts.ts`
 
 - [ ] **Step 1: Write `fonts.ts`**
@@ -424,7 +431,9 @@ export const loadFonts = (): void => {
 > // Alternative if font flicker appears in renders:
 > import { continueRender, delayRender } from 'remotion';
 > const handle = delayRender('fonts');
-> loadFont().waitUntilDone().then(() => continueRender(handle));
+> loadFont()
+>   .waitUntilDone()
+>   .then(() => continueRender(handle));
 > ```
 >
 > Start with the simple version; switch only if the symptom appears.
@@ -449,6 +458,7 @@ git commit -m "feat(theme): add JetBrains Mono loader and font stack constants"
 ## Task 8: Easings
 
 **Files:**
+
 - Create: `shared/theme/easings.ts`
 
 - [ ] **Step 1: Write easings**
@@ -460,8 +470,8 @@ import { interpolate } from 'remotion';
 
 export type EasingFn = (currentFrame: number, startFrame: number) => CSSProperties;
 
-const FADE_IN_FRAMES = 9;   // ~0.3s @ 30fps
-const SLIDE_IN_FRAMES = 8;  // ~0.25s @ 30fps
+const FADE_IN_FRAMES = 9; // ~0.3s @ 30fps
+const SLIDE_IN_FRAMES = 8; // ~0.25s @ 30fps
 const PULSE_DOT_FRAMES = 42; // 1.4s @ 30fps
 const SPAN_GLOW_FRAMES = 60; // 2s @ 30fps
 
@@ -526,6 +536,7 @@ git commit -m "feat(theme): add fadeIn / slideIn / pulseDot / spanGlow easing fu
 ## Task 9: cx-agent-evals theme override
 
 **Files:**
+
 - Create: `shared/theme/projects/cx-agent-evals.ts`
 
 - [ ] **Step 1: Write the override**
@@ -537,8 +548,8 @@ import { defaultTheme } from '../colors';
 
 export const cxAgentEvalsTheme = {
   ...defaultTheme,
-  accent:       '#6ee7b7',   // mint green — HANDOFF reference palette
-  accentDim:    '#2d6b54',
+  accent: '#6ee7b7', // mint green — HANDOFF reference palette
+  accentDim: '#2d6b54',
   accentBright: '#a7f3d0',
   chunks: ['#6ee7b780', '#818cf880', '#fbbf2480', '#f472b680', '#38bdf880'] as const,
 } as const satisfies Theme;
@@ -564,6 +575,7 @@ git commit -m "feat(theme): add cx-agent-evals palette override (mint accent)"
 ## Task 10: Theme barrel (`shared/theme/index.ts`)
 
 **Files:**
+
 - Create: `shared/theme/index.ts`
 
 - [ ] **Step 1: Write the barrel**
@@ -597,6 +609,7 @@ git commit -m "feat(theme): add barrel re-exports"
 ## Task 11: ThemeContext + theme barrel for Remotion src
 
 **Files:**
+
 - Create: `tools/remotion/src/theme/ThemeContext.tsx`
 - Create: `tools/remotion/src/theme/index.ts`
 
@@ -646,6 +659,7 @@ git commit -m "feat(remotion): add ThemeProvider + useTheme() context"
 ## Task 12: Built primitives — TitleCard
 
 **Files:**
+
 - Create: `tools/remotion/src/primitives/TitleCard.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -677,10 +691,7 @@ export const TitleCard: FC<TitleCardProps> = ({
 }) => {
   const theme = useTheme();
   const frame = useCurrentFrame();
-  const entrance =
-    enter === 'fade' ? fadeIn(frame, 0) :
-    enter === 'slide' ? slideIn(frame, 0) :
-    {};
+  const entrance = enter === 'fade' ? fadeIn(frame, 0) : enter === 'slide' ? slideIn(frame, 0) : {};
 
   const centered = align === 'center';
 
@@ -739,6 +750,7 @@ git commit -m "feat(primitives): add TitleCard"
 ## Task 13: Built primitives — Caption
 
 **Files:**
+
 - Create: `tools/remotion/src/primitives/Caption.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -766,15 +778,14 @@ export const Caption: FC<CaptionProps> = ({
 }) => {
   const theme = useTheme();
   const frame = useCurrentFrame();
-  const entrance =
-    enter === 'fade' ? fadeIn(frame, 0) :
-    enter === 'slide' ? slideIn(frame, 0) :
-    {};
+  const entrance = enter === 'fade' ? fadeIn(frame, 0) : enter === 'slide' ? slideIn(frame, 0) : {};
 
   const positional: CSSProperties =
-    position === 'bottom' ? { position: 'absolute', bottom: 96, left: 96, right: 96 } :
-    position === 'top'    ? { position: 'absolute', top: 96, left: 96, right: 96 } :
-                            {};
+    position === 'bottom'
+      ? { position: 'absolute', bottom: 96, left: 96, right: 96 }
+      : position === 'top'
+        ? { position: 'absolute', top: 96, left: 96, right: 96 }
+        : {};
 
   return (
     <div
@@ -818,6 +829,7 @@ git commit -m "feat(primitives): add Caption"
 ## Task 14: Built primitives — Document
 
 **Files:**
+
 - Create: `tools/remotion/src/primitives/Document.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -850,18 +862,14 @@ export const Document: FC<DocumentProps> = ({
   let visibleText = text;
   if (reveal !== 'instant') {
     if (revealDurationFrames === undefined) {
-      throw new Error(
-        `Document: revealDurationFrames is required when reveal="${reveal}"`,
-      );
+      throw new Error(`Document: revealDurationFrames is required when reveal="${reveal}"`);
     }
     const units = reveal === 'byChar' ? [...text] : text.split(/(\s+)/);
     const count = Math.floor(
-      interpolate(
-        frame - revealStartFrame,
-        [0, revealDurationFrames],
-        [0, units.length],
-        { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-      ),
+      interpolate(frame - revealStartFrame, [0, revealDurationFrames], [0, units.length], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      }),
     );
     visibleText = units.slice(0, count).join('');
   }
@@ -906,6 +914,7 @@ git commit -m "feat(primitives): add Document with optional char/word reveal"
 All five stubs render a dashed outline + their name so unfinished work is obvious on preview/render.
 
 **Files:**
+
 - Create: `tools/remotion/src/primitives/Chunk.tsx`
 - Create: `tools/remotion/src/primitives/Span.tsx`
 - Create: `tools/remotion/src/primitives/Token.tsx`
@@ -1135,6 +1144,7 @@ git commit -m "feat(primitives): add stub Chunk / Span / Token / MetricBar / Cur
 ## Task 16: Primitives barrel
 
 **Files:**
+
 - Create: `tools/remotion/src/primitives/index.ts`
 
 - [ ] **Step 1: Write the barrel**
@@ -1171,6 +1181,7 @@ git commit -m "feat(primitives): add barrel export"
 ## Task 17: Sample document + frame map + captions
 
 **Files:**
+
 - Create: `shared/assets/data/sample-document.ts`
 - Create: `tools/remotion/src/compositions/chunk-vs-span/frames.ts`
 - Create: `tools/remotion/src/compositions/chunk-vs-span/captions.ts`
@@ -1195,12 +1206,12 @@ That is the question evaluation is trying to settle.`;
 // Leaf module — no other imports. Prevents circular imports between
 // index.tsx (registers scenes) and captions.ts (needs SceneName).
 export const SCENES = {
-  intro:      { start:    0, duration:  150 }, // 0–5s
-  document:   { start:  150, duration:  300 }, // 5–15s
-  chunking:   { start:  450, duration:  450 }, // 15–30s
-  span:       { start:  900, duration:  300 }, // 30–40s
-  comparison: { start: 1200, duration:  900 }, // 40–70s
-  outro:      { start: 2100, duration:  600 }, // 70–90s
+  intro: { start: 0, duration: 150 }, // 0–5s
+  document: { start: 150, duration: 300 }, // 5–15s
+  chunking: { start: 450, duration: 450 }, // 15–30s
+  span: { start: 900, duration: 300 }, // 30–40s
+  comparison: { start: 1200, duration: 900 }, // 40–70s
+  outro: { start: 2100, duration: 600 }, // 70–90s
 } as const satisfies Record<string, { start: number; duration: number }>;
 
 export type SceneName = keyof typeof SCENES;
@@ -1237,12 +1248,12 @@ if (expectedStart !== TOTAL_DURATION_FRAMES) {
 import type { SceneName } from './frames';
 
 export const CAPTIONS = {
-  intro:      'Chunk vs span — a quick tour of two recall metrics.',
-  document:   'Consider this document.',
-  chunking:   'Split the document into chunks. Each becomes a retrieval unit.',
-  span:       'The true answer lives in this character span.',
+  intro: 'Chunk vs span — a quick tour of two recall metrics.',
+  document: 'Consider this document.',
+  chunking: 'Split the document into chunks. Each becomes a retrieval unit.',
+  span: 'The true answer lives in this character span.',
   comparison: 'Chunk-level recall: 1.0.   Span-level recall: 0.4.',
-  outro:      'Span evaluation is the honest signal.',
+  outro: 'Span evaluation is the honest signal.',
 } as const satisfies Record<SceneName, string>;
 ```
 
@@ -1270,6 +1281,7 @@ git commit -m "feat(chunk-vs-span): add SCENES frame map, captions, and sample d
 All six scenes share the same shape: render a `TitleCard` + `Caption`. Scenes 2 and 3 also use `Document` with the sample text.
 
 **Files:**
+
 - Create: `tools/remotion/src/compositions/chunk-vs-span/scenes/01-intro.tsx`
 - Create: `tools/remotion/src/compositions/chunk-vs-span/scenes/02-document.tsx`
 - Create: `tools/remotion/src/compositions/chunk-vs-span/scenes/03-chunking.tsx`
@@ -1367,11 +1379,7 @@ import { CAPTIONS } from '../captions';
 
 export const SpanScene: FC = () => (
   <>
-    <TitleCard
-      title="The Answer Span"
-      subtitle="0:30–0:40 — character-level"
-      enter="fade"
-    />
+    <TitleCard title="The Answer Span" subtitle="0:30–0:40 — character-level" enter="fade" />
     <Caption text={CAPTIONS.span} position="bottom" />
   </>
 );
@@ -1444,6 +1452,7 @@ git commit -m "feat(chunk-vs-span): add placeholder-fidelity scenes 01–06"
 ## Task 19: Composition shell (`index.tsx`)
 
 **Files:**
+
 - Create: `tools/remotion/src/compositions/chunk-vs-span/index.tsx`
 
 - [ ] **Step 1: Write the composition**
@@ -1510,6 +1519,7 @@ git commit -m "feat(chunk-vs-span): add composition shell wiring all six scenes"
 ## Task 20: Thumbnail composition
 
 **Files:**
+
 - Create: `tools/remotion/src/compositions/chunk-vs-span/thumbnail.tsx`
 
 - [ ] **Step 1: Write the thumbnail**
@@ -1549,6 +1559,7 @@ git commit -m "feat(chunk-vs-span): add YouTube thumbnail composition (1280x720,
 ## Task 21: Root.tsx + Remotion entrypoint
 
 **Files:**
+
 - Create: `tools/remotion/src/Root.tsx`
 - Create: `tools/remotion/src/index.ts`
 
@@ -1634,6 +1645,7 @@ directory is excluded, children inside it can't be re-included — the `!...`
 bangs have no effect. Switch to content-exclusion (`dir/**`) so the bangs work.
 
 **Files:**
+
 - Modify: `.gitignore`
 
 - [ ] **Step 1: Open `.gitignore` and replace the two broken blocks**
@@ -1680,7 +1692,7 @@ shared/assets/video/**
 !shared/assets/**/README.md
 ```
 
-Note the `/**` suffix — this ignores *contents* instead of the directory itself, which lets the `!...` bang rules re-include specific files.
+Note the `/**` suffix — this ignores _contents_ instead of the directory itself, which lets the `!...` bang rules re-include specific files.
 
 - [ ] **Step 2: Test the fix with a sandbox file**
 
@@ -1695,6 +1707,7 @@ git check-ignore -v repo-references/.gitkeep \
 ```
 
 Expected:
+
 - `repo-references/.gitkeep` → no output (not ignored) ✓
 - `shared/assets/audio/.gitkeep` → no output (not ignored) ✓
 - `shared/assets/audio/fake.mp3` → printed line showing `.gitignore` rule that matches ✓
@@ -1719,6 +1732,7 @@ git commit -m "fix(gitignore): switch to dir/** exclusion so .gitkeep + README.m
 ## Task 23: Placeholder READMEs for deferred tools + asset dirs
 
 **Files:**
+
 - Create: `tools/ai-gen/README.md`
 - Create: `tools/ffmpeg/README.md`
 - Create: `tools/editor/README.md`
@@ -1818,12 +1832,13 @@ git commit -m "docs: add placeholder READMEs for deferred tools and shared asset
 ## Task 24: repo-references/ README + .gitkeep
 
 **Files:**
+
 - Create: `repo-references/.gitkeep`
 - Create: `repo-references/README.md`
 
 - [ ] **Step 1: Write `repo-references/README.md`**
 
-```markdown
+````markdown
 # repo-references/
 
 This folder holds local clones of external source repos — the codebases each
@@ -1838,9 +1853,11 @@ independently.
   cd repo-references
   git clone git@github.com:vinit-agr/cx-agent-evals.git
   ```
+````
 
 Add new entries here when a new source repo enters the studio.
-```
+
+````
 
 > **Note:** the clone URL uses the `vinit-agr` GitHub owner. If the source repo lives elsewhere, edit the URL at clone time — the README is a hint, not an automated step.
 
@@ -1848,7 +1865,7 @@ Add new entries here when a new source repo enters the studio.
 
 ```sh
 touch repo-references/.gitkeep
-```
+````
 
 - [ ] **Step 3: Verify `.gitignore` still lets these two files through**
 
@@ -1870,6 +1887,7 @@ git commit -m "docs: add repo-references/ README with expected clone commands"
 ## Task 25: Project-level docs for chunk-vs-span
 
 **Files:**
+
 - Create: `projects/cx-agent-evals--chunk-vs-span/script.md`
 - Create: `projects/cx-agent-evals--chunk-vs-span/storyboard.md`
 - Create: `projects/cx-agent-evals--chunk-vs-span/notes.md`
@@ -1886,7 +1904,7 @@ Canonical narration and caption source. Scenes and durations match
 
 ## Scene 1 — Intro (0:00–0:05)
 
-**Narration:** *A 60-second tour of two ways to score a retrieval system.*
+**Narration:** _A 60-second tour of two ways to score a retrieval system._
 
 **Caption:** "Chunk vs span — a quick tour of two recall metrics."
 
@@ -1896,8 +1914,8 @@ Canonical narration and caption source. Scenes and durations match
 
 ## Scene 2 — The Document (0:05–0:15)
 
-**Narration:** *Retrieval-augmented generation grounds a model in a corpus.
-Let's take one short passage from that corpus.*
+**Narration:** _Retrieval-augmented generation grounds a model in a corpus.
+Let's take one short passage from that corpus._
 
 **Caption:** "Consider this document."
 
@@ -1907,8 +1925,8 @@ Let's take one short passage from that corpus.*
 
 ## Scene 3 — Chunking (0:15–0:30)
 
-**Narration:** *The corpus is split into chunks. Each chunk becomes a unit
-the retriever can pick or skip.*
+**Narration:** _The corpus is split into chunks. Each chunk becomes a unit
+the retriever can pick or skip._
 
 **Caption:** "Split the document into chunks. Each becomes a retrieval unit."
 
@@ -1918,8 +1936,8 @@ the retriever can pick or skip.*
 
 ## Scene 4 — The Answer Span (0:30–0:40)
 
-**Narration:** *The true answer is not a whole chunk. It's a specific
-character span inside one of them.*
+**Narration:** _The true answer is not a whole chunk. It's a specific
+character span inside one of them._
 
 **Caption:** "The true answer lives in this character span."
 
@@ -1929,12 +1947,12 @@ character span inside one of them.*
 
 ## Scene 5 — Comparison (0:40–1:10)
 
-**Narration:** *Chunk-level recall says: the right chunk was retrieved, score
+**Narration:** _Chunk-level recall says: the right chunk was retrieved, score
 is 1.0. Span-level recall compares character overlap, and scores 0.4 — the
 retrieved chunk contains the answer, but 60 percent of its text is
-irrelevant context.*
+irrelevant context._
 
-**Caption:** "Chunk-level recall: 1.0.   Span-level recall: 0.4."
+**Caption:** "Chunk-level recall: 1.0. Span-level recall: 0.4."
 
 **Visual:** two metric bars animate to their values side-by-side.
 
@@ -1942,8 +1960,8 @@ irrelevant context.*
 
 ## Scene 6 — Outro (1:10–1:30)
 
-**Narration:** *If you want honest retrieval numbers, measure the span you
-asked for — not the box it came in.*
+**Narration:** _If you want honest retrieval numbers, measure the span you
+asked for — not the box it came in._
 
 **Caption:** "Span evaluation is the honest signal."
 
@@ -1955,14 +1973,14 @@ asked for — not the box it came in.*
 ```markdown
 # chunk-vs-span — Storyboard
 
-| # | Scene       | Duration | Tool     | Primitives                     | Visual                                     |
-|---|-------------|----------|----------|--------------------------------|--------------------------------------------|
-| 1 | Intro       | 0:05     | remotion | TitleCard, Caption             | Mint-accent title on dark bg.              |
-| 2 | Document    | 0:10     | remotion | TitleCard, Document, Caption   | Paragraph reveals word-by-word.            |
-| 3 | Chunking    | 0:15     | remotion | TitleCard, Chunk×5, Caption    | Colored chunk stack below title.           |
-| 4 | Span        | 0:10     | remotion | TitleCard, Caption             | (Span primitive is stub on day one.)       |
-| 5 | Comparison  | 0:30     | remotion | TitleCard, MetricBar×2, Caption| Two bars — chunk-recall vs span-recall.    |
-| 6 | Outro       | 0:20     | remotion | TitleCard, Caption             | URL on dark bg.                            |
+| #   | Scene      | Duration | Tool     | Primitives                      | Visual                                  |
+| --- | ---------- | -------- | -------- | ------------------------------- | --------------------------------------- |
+| 1   | Intro      | 0:05     | remotion | TitleCard, Caption              | Mint-accent title on dark bg.           |
+| 2   | Document   | 0:10     | remotion | TitleCard, Document, Caption    | Paragraph reveals word-by-word.         |
+| 3   | Chunking   | 0:15     | remotion | TitleCard, Chunk×5, Caption     | Colored chunk stack below title.        |
+| 4   | Span       | 0:10     | remotion | TitleCard, Caption              | (Span primitive is stub on day one.)    |
+| 5   | Comparison | 0:30     | remotion | TitleCard, MetricBar×2, Caption | Two bars — chunk-recall vs span-recall. |
+| 6   | Outro      | 0:20     | remotion | TitleCard, Caption              | URL on dark bg.                         |
 ```
 
 - [ ] **Step 3: Write `notes.md`**
@@ -2013,13 +2031,14 @@ git commit -m "docs(project): add chunk-vs-span script, storyboard, and design n
 ## Task 26: Log conventions + inaugural entries
 
 **Files:**
+
 - Create: `log/README.md`
 - Create: `log/2026-04-20-pilot-kickoff.md`
 - Create: `log/projects/cx-agent-evals--chunk-vs-span.md`
 
 - [ ] **Step 1: Write `log/README.md`**
 
-```markdown
+````markdown
 # log/
 
 Work log for the content studio. Two axes:
@@ -2035,16 +2054,18 @@ Work log for the content studio. Two axes:
 ---
 date: YYYY-MM-DD
 session: <short-slug>
-project: <source-repo>--<video-slug>   # optional
+project: <source-repo>--<video-slug> # optional
 ---
 ```
+````
 
 ## Conventions
 
 - Write at end of session.
 - Commit each log entry in its own commit.
 - Logs are not auto-generated; they're the human's journal.
-```
+
+````
 
 - [ ] **Step 2: Write `log/2026-04-20-pilot-kickoff.md`**
 
@@ -2085,7 +2106,7 @@ Bootstrapped the content-studio repo end-to-end:
   just TitleCard placeholders.
 - Draft narration v1 and cut a second render with on-screen captions tuned.
 - Decide TTS vendor for v2 (ElevenLabs vs OpenAI TTS).
-```
+````
 
 - [ ] **Step 3: Write `log/projects/cx-agent-evals--chunk-vs-span.md`**
 
@@ -2103,6 +2124,7 @@ placeholder fidelity (`TitleCard` + `Caption` + a few primitives). Goal was
 pipeline validation, not visual polish.
 
 What worked:
+
 - Theme context wiring: editing `cx-agent-evals.ts` palette updates the
   preview in-place.
 - `frames.ts` leaf module pattern avoids circular imports as scenes grow.
@@ -2110,6 +2132,7 @@ What worked:
   coverage at compile time.
 
 What's next:
+
 - Replace `Span` / `MetricBar` stubs with animated visuals.
 - Tune caption copy against narration v1.
 ```
@@ -2168,6 +2191,7 @@ Expected: Remotion CLI starts a local dev server (typically at `http://localhost
 - [ ] **Step 2: Verify both compositions load**
 
 In the browser sidebar you should see:
+
 - `chunk-vs-span` — a Composition (1920×1080, 90s, 30fps).
 - `chunk-vs-span-thumbnail` — a Still (1280×720). Stills render frame 0 only; no timeline scrubber for this entry.
 
@@ -2242,11 +2266,12 @@ No commit at this step — `out/` stays out of the repo.
 ## Task 30: Expand README.md and update HANDOFF note
 
 **Files:**
+
 - Modify: `README.md`
 
 - [ ] **Step 1: Rewrite `README.md`**
 
-```markdown
+````markdown
 # content-studio
 
 Standalone studio repo for producing videos and motion graphics — Remotion-first, tool-pluralist.
@@ -2270,6 +2295,7 @@ corepack enable
 pnpm install
 pnpm studio
 ```
+````
 
 Then open the printed URL. The `chunk-vs-span` composition previews the pilot.
 
@@ -2301,13 +2327,14 @@ To script a video about a source repo, clone it into `repo-references/` — the 
 ## License
 
 MIT — see [`LICENSE`](./LICENSE).
-```
+
+````
 
 - [ ] **Step 2: Verify format + lint**
 
 ```sh
 pnpm format:check
-```
+````
 
 Expected: exits 0.
 
@@ -2403,6 +2430,7 @@ Expected: pushes all new commits to `https://github.com/vinit-agr/content-studio
 - [ ] **Step 7: Verify on GitHub**
 
 Open `https://github.com/vinit-agr/content-studio` in a browser. Confirm:
+
 - The latest commit message on `main` matches the README commit.
 - The repo layout matches the spec §5 tree.
 - `out/` is absent from the repo.
@@ -2421,22 +2449,22 @@ Expected: `Your branch is up to date with 'origin/main'. nothing to commit, work
 
 ## Acceptance Criteria Mapping (cross-check against spec §10)
 
-| Spec criterion | Task(s) |
-|---|---|
-| §10.1 `pnpm install` clean | Task 1.2 |
-| §10.2 `pnpm typecheck` | Task 27.1, Task 31.1 |
-| §10.3 `pnpm lint` | Task 27.1, Task 31.1 |
-| §10.4 `pnpm format:check` | Task 27.1, Task 31.1 |
-| §10.5 `pnpm studio` boots, 6 scenes | Task 28 |
-| §10.6 `pnpm render:chunk-vs-span` → MP4 | Task 29.1, Task 29.4 |
-| §10.7 `pnpm thumbnail:chunk-vs-span` → PNG | Task 29.2 |
-| §10.8 `log/2026-04-20-pilot-kickoff.md` | Task 26.2 |
-| §10.9 `repo-references/README.md` | Task 24.1 |
-| §10.10 project docs exist, non-empty | Task 25 |
-| §10.11 `captions.ts` entries per scene | Task 17.3 |
+| Spec criterion                                  | Task(s)                               |
+| ----------------------------------------------- | ------------------------------------- |
+| §10.1 `pnpm install` clean                      | Task 1.2                              |
+| §10.2 `pnpm typecheck`                          | Task 27.1, Task 31.1                  |
+| §10.3 `pnpm lint`                               | Task 27.1, Task 31.1                  |
+| §10.4 `pnpm format:check`                       | Task 27.1, Task 31.1                  |
+| §10.5 `pnpm studio` boots, 6 scenes             | Task 28                               |
+| §10.6 `pnpm render:chunk-vs-span` → MP4         | Task 29.1, Task 29.4                  |
+| §10.7 `pnpm thumbnail:chunk-vs-span` → PNG      | Task 29.2                             |
+| §10.8 `log/2026-04-20-pilot-kickoff.md`         | Task 26.2                             |
+| §10.9 `repo-references/README.md`               | Task 24.1                             |
+| §10.10 project docs exist, non-empty            | Task 25                               |
+| §10.11 `captions.ts` entries per scene          | Task 17.3                             |
 | §10.12 clean commit history, `.gitignore` works | Task 22 (fix) + Task 29.5 + Task 31.2 |
-| §10.13 primitive prop types declared | Tasks 12–15 |
-| §10.14 hot reload smoke test | Task 28.3 |
+| §10.13 primitive prop types declared            | Tasks 12–15                           |
+| §10.14 hot reload smoke test                    | Task 28.3                             |
 
 Every criterion has a task. Every task ends with either a commit or a verification step that cross-references the spec.
 
@@ -2458,4 +2486,4 @@ This plan was self-reviewed against the spec; the result is the plan above. The 
 
 ---
 
-*End of plan.*
+_End of plan._

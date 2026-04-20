@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@9.12.0",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "description": "Standalone studio repo for producing videos and motion graphics — Remotion-first, tool-pluralist.",
   "license": "MIT",
   "scripts": {

@@ -42,18 +42,18 @@ These are not re-litigated here. Summary:
 
 ## 4. Resolved Open Questions
 
-| # | Topic | Decision |
-|---|---|---|
-| Q5 | `repo-references/` mechanism | **A** — plain `git clone` into gitignored folder; README lists expected clones. |
-| Q6 | Theme sync | **C** — per-project theme files (hand-written). No sync script yet. |
-| Q7 | Work-log format | **A** — dated narrative entries in `log/` + per-project files in `log/projects/` + `log/README.md` conventions. |
-| Q8 | Project naming | **A** — flat `<source-repo>--<video-slug>` (double-dash separator). |
-| Q9 | Audio / narration | **D → B** — pilot v1 captions-only, no audio pipeline on day one; v2 adds AI TTS (vendor chosen at v2 time). Music bed deferred. |
-| Q10a | Render output location | **B** — local `out/` only; manual YouTube upload. |
-| Q10b | Codec | **A** — H.264 1080p30 MP4, AAC audio. |
-| Q10c | Thumbnail | **A** — rendered as a Remotion composition (1280×720, 1 frame). |
-| Q11 | Dependencies | See §6. |
-| Q12 | Repo name | `content-studio`, already published at `github.com/vinit-agr/content-studio`. |
+| #    | Topic                        | Decision                                                                                                                         |
+| ---- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Q5   | `repo-references/` mechanism | **A** — plain `git clone` into gitignored folder; README lists expected clones.                                                  |
+| Q6   | Theme sync                   | **C** — per-project theme files (hand-written). No sync script yet.                                                              |
+| Q7   | Work-log format              | **A** — dated narrative entries in `log/` + per-project files in `log/projects/` + `log/README.md` conventions.                  |
+| Q8   | Project naming               | **A** — flat `<source-repo>--<video-slug>` (double-dash separator).                                                              |
+| Q9   | Audio / narration            | **D → B** — pilot v1 captions-only, no audio pipeline on day one; v2 adds AI TTS (vendor chosen at v2 time). Music bed deferred. |
+| Q10a | Render output location       | **B** — local `out/` only; manual YouTube upload.                                                                                |
+| Q10b | Codec                        | **A** — H.264 1080p30 MP4, AAC audio.                                                                                            |
+| Q10c | Thumbnail                    | **A** — rendered as a Remotion composition (1280×720, 1 frame).                                                                  |
+| Q11  | Dependencies                 | See §6.                                                                                                                          |
+| Q12  | Repo name                    | `content-studio`, already published at `github.com/vinit-agr/content-studio`.                                                    |
 
 ## 5. Repo Layout
 
@@ -228,7 +228,7 @@ Config.overrideWebpackConfig((current) => ({
 - `shared/theme/types.ts` — exports the canonical `Theme` type: `{ bg, bgElevated, bgSurface, bgHover, border, borderBright, text, textMuted, textDim, accent, accentDim, accentBright, warn, error, chunks: readonly [string, string, string, string, string] }`. Also exports a `ChunkIndex = 0 | 1 | 2 | 3 | 4` helper type.
 - `shared/theme/colors.ts` — exports `defaultTheme: Theme`, the base dark palette. Satisfies `Theme` via `satisfies` clause so downstream palettes stay in sync.
 - `shared/theme/fonts.ts` — exports `loadFonts()` (calls `loadFont()` from `@remotion/google-fonts/JetBrainsMono`) and constants `fontFamily` (`'JetBrains Mono'`) + `monoStack` (`"'JetBrains Mono', 'Fira Code', 'SF Mono', monospace"`). `loadFonts()` is called once in `Root.tsx`.
-- `shared/theme/easings.ts` — exports named easings `fadeIn`, `slideIn`, `pulseDot`, `spanGlow`, each carrying its duration (in frames at 30fps) and a function that consumes the current frame + a start frame and returns a `React.CSSProperties` patch (opacity, transform, boxShadow). Implementation substrate is Remotion's `interpolate()` and `spring()`. Exact factoring is locked in the plan (see §13.2) — this spec fixes the *name*, *duration*, and *consumer contract* but not the internal shape.
+- `shared/theme/easings.ts` — exports named easings `fadeIn`, `slideIn`, `pulseDot`, `spanGlow`, each carrying its duration (in frames at 30fps) and a function that consumes the current frame + a start frame and returns a `React.CSSProperties` patch (opacity, transform, boxShadow). Implementation substrate is Remotion's `interpolate()` and `spring()`. Exact factoring is locked in the plan (see §13.2) — this spec fixes the _name_, _duration_, and _consumer contract_ but not the internal shape.
 - `shared/theme/projects/cx-agent-evals.ts` — hand-written from HANDOFF's "Reference theme" block. Exports `cxAgentEvalsTheme: Theme` (satisfies `Theme`).
 - `shared/theme/index.ts` — re-exports `Theme`, `ChunkIndex`, `defaultTheme`, `loadFonts`, `fontFamily`, `monoStack`, `easings`.
 
@@ -237,6 +237,7 @@ Config.overrideWebpackConfig((current) => ({
 React Context. One `ThemeContext` defined in `tools/remotion/src/theme/ThemeContext.tsx`, exporting a `<ThemeProvider theme={...}>` and a `useTheme()` hook. `Root.tsx` wraps each composition's render with the relevant theme (`cxAgentEvalsTheme` for cx-agent-evals videos; `defaultTheme` otherwise). Primitives and scenes call `useTheme()` to read colors. No direct imports of palette constants from inside primitives — this guarantees primitives remain reusable across source-repo themes without edits.
 
 **Why context, not prop-drilling or module constants:**
+
 - Prop-drilling through 6 scenes and 8 primitives is noisy and error-prone.
 - Module-level constant selection requires primitives to know which source repo they belong to, which violates the "primitives are theme-agnostic" invariant.
 - React context is the Remotion-idiomatic pattern (Remotion itself uses context for timeline state).
@@ -255,11 +256,15 @@ import { ChunkVsSpan } from './compositions/chunk-vs-span';
 import { ChunkVsSpanThumbnail } from './compositions/chunk-vs-span/thumbnail';
 import { TOTAL_DURATION_FRAMES } from './compositions/chunk-vs-span/frames';
 
-loadFonts();  // module-load-time, not per-composition
+loadFonts(); // module-load-time, not per-composition
 
-const withTheme = <P,>(Inner: React.ComponentType<P>): React.FC<P> => (props) => (
-  <ThemeProvider theme={cxAgentEvalsTheme}><Inner {...props} /></ThemeProvider>
-);
+const withTheme =
+  <P,>(Inner: React.ComponentType<P>): React.FC<P> =>
+  (props) => (
+    <ThemeProvider theme={cxAgentEvalsTheme}>
+      <Inner {...props} />
+    </ThemeProvider>
+  );
 
 export const Root: React.FC = () => (
   <>
@@ -290,12 +295,12 @@ export const Root: React.FC = () => (
 
 ```ts
 export const SCENES = {
-  intro:      { start:    0, duration:  150 },  // 0–5s
-  document:   { start:  150, duration:  300 },  // 5–15s
-  chunking:   { start:  450, duration:  450 },  // 15–30s
-  span:       { start:  900, duration:  300 },  // 30–40s
-  comparison: { start: 1200, duration:  900 },  // 40–70s
-  outro:      { start: 2100, duration:  600 },  // 70–90s
+  intro: { start: 0, duration: 150 }, // 0–5s
+  document: { start: 150, duration: 300 }, // 5–15s
+  chunking: { start: 450, duration: 450 }, // 15–30s
+  span: { start: 900, duration: 300 }, // 30–40s
+  comparison: { start: 1200, duration: 900 }, // 40–70s
+  outro: { start: 2100, duration: 600 }, // 70–90s
 } as const satisfies Record<string, { start: number; duration: number }>;
 
 export type SceneName = keyof typeof SCENES;
@@ -316,7 +321,7 @@ Rationale for extracting to its own file: `captions.ts` imports `SceneName` to e
 type TitleCardProps = {
   title: string;
   subtitle?: string;
-  align?: 'center' | 'left';       // default 'center'
+  align?: 'center' | 'left'; // default 'center'
   enter?: 'fade' | 'slide' | 'none'; // default 'fade'
   style?: React.CSSProperties;
   className?: string;
@@ -325,46 +330,51 @@ type TitleCardProps = {
 type CaptionProps = {
   text: string;
   position?: 'bottom' | 'top' | 'inline'; // default 'bottom'
-  enter?: 'fade' | 'slide' | 'none';      // default 'slide'
+  enter?: 'fade' | 'slide' | 'none'; // default 'slide'
   style?: React.CSSProperties;
 };
 
 type DocumentProps = {
-  text: string;                    // full body
+  text: string; // full body
   reveal?: 'instant' | 'byChar' | 'byWord'; // default 'instant'
-  revealStartFrame?: number;       // default 0 (composition-relative)
-  revealDurationFrames?: number;   // required if reveal !== 'instant'
+  revealStartFrame?: number; // default 0 (composition-relative)
+  revealDurationFrames?: number; // required if reveal !== 'instant'
   style?: React.CSSProperties;
 };
 
-type ChunkProps = {                // STUB
-  index: number;                   // 0-based chunk index; maps to theme.chunks[index % 5]
+type ChunkProps = {
+  // STUB
+  index: number; // 0-based chunk index; maps to theme.chunks[index % 5]
   text: string;
-  label?: string;                  // e.g. "C1"
+  label?: string; // e.g. "C1"
   style?: React.CSSProperties;
 };
 
-type SpanProps = {                 // STUB
-  text: string;                    // span text content
-  glow?: boolean;                  // spanGlow animation
+type SpanProps = {
+  // STUB
+  text: string; // span text content
+  glow?: boolean; // spanGlow animation
   style?: React.CSSProperties;
 };
 
-type TokenProps = {                // STUB
+type TokenProps = {
+  // STUB
   text: string;
   highlighted?: boolean;
   style?: React.CSSProperties;
 };
 
-type MetricBarProps = {            // STUB
+type MetricBarProps = {
+  // STUB
   label: string;
-  value: number;                   // 0..1
-  color?: keyof Theme;             // default 'accent'
+  value: number; // 0..1
+  color?: keyof Theme; // default 'accent'
   style?: React.CSSProperties;
 };
 
-type CursorProps = {               // STUB
-  blinking?: boolean;              // default true
+type CursorProps = {
+  // STUB
+  blinking?: boolean; // default true
   style?: React.CSSProperties;
 };
 ```
@@ -395,16 +405,16 @@ Scenes take no props. Each reads its scene-relative frame via `useCurrentFrame()
 import type { SceneName } from './frames';
 
 export const CAPTIONS = {
-  intro:      "A 60-second tour of chunk vs span evaluation.",
-  document:   "Consider this document.",
-  chunking:   "Split into chunks. Each chunk becomes a retrieval unit.",
-  span:       "The true answer is this character span.",
-  comparison: "Chunk-level recall: 1.0. Span-level recall: 0.4.",
-  outro:      "Span evaluation is the honest signal.",
+  intro: 'A 60-second tour of chunk vs span evaluation.',
+  document: 'Consider this document.',
+  chunking: 'Split into chunks. Each chunk becomes a retrieval unit.',
+  span: 'The true answer is this character span.',
+  comparison: 'Chunk-level recall: 1.0. Span-level recall: 0.4.',
+  outro: 'Span evaluation is the honest signal.',
 } as const satisfies Record<SceneName, string>;
 ```
 
-Exact caption text is finalized in the plan from `script.md`; the spec only fixes the *shape* (one entry per scene, keys matching `SCENES`).
+Exact caption text is finalized in the plan from `script.md`; the spec only fixes the _shape_ (one entry per scene, keys matching `SCENES`).
 
 **Sample data:** `shared/assets/data/sample-document.ts` — a TS module exporting a single `SAMPLE_DOCUMENT: string` constant (80–120 words about RAG retrieval / chunking, used by the `document` and `chunking` scenes). TS constant chosen over `.md` to avoid a webpack raw-loader rule and an ambient `declare module '*.md'` — both of which add config for no gain at a single-document scale.
 
@@ -436,7 +446,7 @@ Describes the log structure so the user can pick it up fresh six months from now
 
 Instructs a fresh clone how to populate external references:
 
-```markdown
+````markdown
 # repo-references/
 
 This folder holds local clones of external source repos — the codebases each
@@ -450,8 +460,10 @@ independently.
   cd repo-references
   git clone git@github.com:<owner>/cx-agent-evals.git
   ```
+````
 
 Add new entries here when a new source repo enters the studio.
+
 ```
 
 (The `<owner>` placeholder is filled in by the implementation plan from the user's actual repo URL.)
@@ -536,3 +548,4 @@ The implementation plan should resolve:
 ---
 
 *End of design — iteration 3 (implementation-ready).*
+```
