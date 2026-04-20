@@ -1,0 +1,64 @@
+{
+  "name": "content-studio",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.12.0",
+  "engines": { "node": ">=20" },
+  "description": "Standalone studio repo for producing videos and motion graphics — Remotion-first, tool-pluralist.",
+  "license": "MIT",
+  "scripts": {
+    "studio": "remotion studio",
+    "render:chunk-vs-span": "remotion render chunk-vs-span out/cx-agent-evals--chunk-vs-span/v01.mp4",
+    "thumbnail:chunk-vs-span": "remotion still chunk-vs-span-thumbnail out/cx-agent-evals--chunk-vs-span/v01-thumb.png",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.0",
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "@remotion/renderer": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@remotion/bundler": "4.0.450",
+      "@remotion/cli": "4.0.450",
+      "@remotion/compositor-darwin-arm64": "4.0.450",
+      "@remotion/compositor-darwin-x64": "4.0.450",
+      "@remotion/compositor-linux-arm64-gnu": "4.0.450",
+      "@remotion/compositor-linux-arm64-musl": "4.0.450",
+      "@remotion/compositor-linux-x64-gnu": "4.0.450",
+      "@remotion/compositor-linux-x64-musl": "4.0.450",
+      "@remotion/compositor-win32-x64-msvc": "4.0.450",
+      "@remotion/google-fonts": "4.0.450",
+      "@remotion/licensing": "4.0.450",
+      "@remotion/media-parser": "4.0.450",
+      "@remotion/media-utils": "4.0.450",
+      "@remotion/player": "4.0.450",
+      "@remotion/renderer": "4.0.450",
+      "@remotion/streaming": "4.0.450",
+      "@remotion/studio": "4.0.450",
+      "@remotion/studio-server": "4.0.450",
+      "@remotion/studio-shared": "4.0.450",
+      "@remotion/web-renderer": "4.0.450",
+      "@remotion/zod-types": "4.0.450",
+      "remotion": "4.0.450"
+    }
+  }
+}
