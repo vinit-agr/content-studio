@@ -72,3 +72,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# Claude Code worktrees (isolated agent branches, local only)
+.claude/worktrees/
