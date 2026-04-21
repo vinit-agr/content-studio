@@ -112,50 +112,56 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-Mapping populated by roadmapper.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAP-01 | TBD | Pending |
-| CAP-02 | TBD | Pending |
-| CAP-03 | TBD | Pending |
-| CAP-04 | TBD | Pending |
-| CAP-05 | TBD | Pending |
-| CAP-06 | TBD | Pending |
-| CAP-07 | TBD | Pending |
-| DSL-01 | TBD | Pending |
-| DSL-02 | TBD | Pending |
-| DSL-03 | TBD | Pending |
-| DSL-04 | TBD | Pending |
-| DSL-05 | TBD | Pending |
-| DSL-06 | TBD | Pending |
-| DSL-07 | TBD | Pending |
-| CUR-01 | TBD | Pending |
-| CUR-02 | TBD | Pending |
-| CUR-03 | TBD | Pending |
-| CLI-01 | TBD | Pending |
-| CLI-02 | TBD | Pending |
-| CLI-03 | TBD | Pending |
-| CLI-04 | TBD | Pending |
-| CLI-05 | TBD | Pending |
-| CLI-06 | TBD | Pending |
-| ART-01 | TBD | Pending |
-| ART-02 | TBD | Pending |
-| AGT-01 | TBD | Pending |
-| AGT-02 | TBD | Pending |
-| AGT-03 | TBD | Pending |
-| AGT-04 | TBD | Pending |
-| AGT-05 | TBD | Pending |
-| SHOT-01 | TBD | Pending |
-| SHOT-02 | TBD | Pending |
-| SHOT-03 | TBD | Pending |
-| SHOT-04 | TBD | Pending |
+| CAP-01 | Phase 1 | Pending |
+| CAP-02 | Phase 1 | Pending |
+| CAP-03 | Phase 1 | Pending |
+| CAP-04 | Phase 1 | Pending |
+| CAP-05 | Phase 1 | Pending |
+| CAP-06 | Phase 1 | Pending |
+| CAP-07 | Phase 1 | Pending |
+| DSL-01 | Phase 2 | Pending |
+| DSL-02 | Phase 2 | Pending |
+| DSL-03 | Phase 2 | Pending |
+| DSL-04 | Phase 2 | Pending |
+| DSL-05 | Phase 2 | Pending |
+| DSL-06 | Phase 2 | Pending |
+| DSL-07 | Phase 2 | Pending |
+| CUR-01 | Phase 1 | Pending |
+| CUR-02 | Phase 2 | Pending |
+| CUR-03 | Phase 2 | Pending |
+| CLI-01 | Phase 3 | Pending |
+| CLI-02 | Phase 3 | Pending |
+| CLI-03 | Phase 3 | Pending |
+| CLI-04 | Phase 2 | Pending |
+| CLI-05 | Phase 2 | Pending |
+| CLI-06 | Phase 2 | Pending |
+| ART-01 | Phase 3 | Pending |
+| ART-02 | Phase 3 | Pending |
+| AGT-01 | Phase 4 | Pending |
+| AGT-02 | Phase 4 | Pending |
+| AGT-03 | Phase 4 | Pending |
+| AGT-04 | Phase 4 | Pending |
+| AGT-05 | Phase 4 | Pending |
+| SHOT-01 | Phase 3 | Pending |
+| SHOT-02 | Phase 1 | Pending |
+| SHOT-03 | Phase 3 | Pending |
+| SHOT-04 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 34 total
-- Mapped to phases: 0 (roadmapper will populate)
-- Unmapped: 34 ⚠️ (expected — roadmap not yet created)
+- Mapped to phases: 34
+- Unmapped: 0 ✓
+
+**Phase distribution:**
+- Phase 1 (Capture Pipeline): 9 requirements (CAP-01..07, CUR-01, SHOT-02)
+- Phase 2 (Session DSL + Script Runner + Cursor Compositing): 12 requirements (DSL-01..07, CUR-02, CUR-03, CLI-04, CLI-05, CLI-06)
+- Phase 3 (Artifacts + CLI + hellotars Ship Gate): 8 requirements (CLI-01, CLI-02, CLI-03, ART-01, ART-02, SHOT-01, SHOT-03, SHOT-04)
+- Phase 4 (Agent Mode + Codegen): 5 requirements (AGT-01..05)
+
+Note: SHOT-02 (DOM spike documentation) lives in Phase 1 because it's the Phase-0 spike folded in as a Phase 1 prereq — the artifact must exist before any selector code is written, and Phase 1 is where the driver/recorder primitives that consume those selectors are built.
 
 ---
 *Requirements defined: 2026-04-21*
-*Last updated: 2026-04-21 after initial definition*
+*Last updated: 2026-04-21 after roadmap creation (traceability table populated)*
