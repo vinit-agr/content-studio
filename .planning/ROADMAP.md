@@ -1,86 +1,56 @@
-# Roadmap: Content Studio — `tools/browser-capture/` milestone
+# Roadmap: Content Studio — Ship `chunk-vs-span` v02 to YouTube
 
 ## Overview
 
-`tools/browser-capture/` is a new, additive module that lives alongside the existing (Validated) `tools/remotion/` pipeline. The journey: build the capture pipeline (driver + screenshot-loop recorder + ffmpeg encoder) as the architectural backbone, layer the session DSL + script runner + cursor compositing on top so Vinit can author replayable shots, then ship the v1 ship gate (artifacts + CLI + first real hellotars.com capture). After v1 ships, add agent mode (Claude Agent SDK + codegen) so exploratory NL prompts produce committable scripts. The existing Remotion stuff is left untouched — this milestone is purely additive.
+Take the existing pipeline-validation pilot (`out/cx-agent-evals--chunk-vs-span/v01.mp4`) from card-only stub visuals + on-screen captions to a polished, voiceover-driven, captionless v02 ready for YouTube. Two phases: first polish the in-use stub primitives (`Chunk` + `MetricBar`) and remove the on-screen caption layer, then generate the ElevenLabs VO and render the final v02. Existing finished primitives (TitleCard, Caption, Document) and theme stay as-is; unused stubs (Token, Span, Cursor) are explicitly out of scope.
 
 ## Phases
 
 **Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+- Integer phases (1, 2): Planned milestone work
+- Decimal phases (1.1, 1.2): Urgent insertions (marked with INSERTED)
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Capture Pipeline** - Driver + screenshot-loop recorder + ffmpeg encoder; Phase 0 DOM spike + ffmpeg-static smoke test folded in as prereqs
-- [ ] **Phase 2: Session DSL + Script Runner + Cursor Compositing** - Typed `defineSession()` DSL, script runner, pre-flight assertions, reporters, `dismissOverlays()`, second-pass cursor compositor
-- [ ] **Phase 3: Artifacts + CLI + hellotars Ship Gate** - Output-path resolution, manifest, `commander` CLI, first real hellotars.com session, README — V1 SHIP GATE
-- [ ] **Phase 4: Agent Mode + Codegen** - Claude Agent SDK runner with custom browser tools, end-of-run codegen serializer, cost guardrails
+- [ ] **Phase 1: Animation Polish + Caption Removal** - `Chunk` and `MetricBar` primitives lose their `data-stub` placeholders and animate properly using existing theme tokens; on-screen caption rendering disabled in `chunk-vs-span` composition
+- [ ] **Phase 2: Voiceover + Final Render + Ship** - ElevenLabs stock voice generates narration MP3 from existing `script.md`; audio wired into composition via `<Audio>` synced to scene start frames; `v02.mp4` rendered and uploaded to YouTube
 
 ## Phase Details
 
-### Phase 1: Capture Pipeline
-**Goal**: A reliable, video-grade frame-to-MP4 pipeline that can be driven by a smoke-test script — the architectural backbone everything else sits on top of
+### Phase 1: Animation Polish + Caption Removal
+**Goal**: The `chunk-vs-span` composition renders without any `data-stub` markers and without on-screen captions, with `Chunk` and `MetricBar` animating in a way visually coherent with the existing finished primitives — visuals stand on their own ahead of the VO pass
 **Depends on**: Nothing (first phase)
-**Requirements**: CAP-01, CAP-02, CAP-03, CAP-04, CAP-05, CAP-06, CAP-07, CUR-01
+**Requirements**: ANIM-01, ANIM-02, ANIM-03, ANIM-04, CAP-01, CAP-02
 **Success Criteria** (what must be TRUE):
-  1. A throwaway smoke-test script can drive Chromium through 6 step kinds (`goto`, `click`, `type`, `waitFor`, `wait`, `scroll`) via the `BrowserDriver` interface — no `playwright` import outside the driver impl
-  2. The `ScreenshotLoopRecorder` streams frames to `ffmpeg-static` stdin (no WebM intermediate, no per-frame PNGs on disk) and produces a 30fps CFR H.264 MP4 that ffprobe verifies as `yuv420p` + `bt709` color tags + faststart-enabled
-  3. Chromium launches with `--mute-audio --autoplay-policy=user-gesture-required --force-color-profile=srgb` and a locked 1920×1080 viewport at `deviceScaleFactor: 1` (no resize during a session)
-  4. The recorder captures an `InteractionTimeline` (timestamp, x, y, event-kind) alongside frames, so the cursor compositor in Phase 2 has the data it needs
-  5. Startup version-check on the bundled `ffmpeg-static` binary fails loudly with a clear message if the binary is broken; `.planning/research/shots/hellotars-com/dom-notes.md` exists from the Phase-0 spike
+  1. `tools/remotion/src/primitives/Chunk.tsx` renders 5 colored chunks in scene 3 with proper entry animation (no `data-stub` attribute, no dashed-border placeholder), using `shared/theme/easings.ts` and existing color palette
+  2. `tools/remotion/src/primitives/MetricBar.tsx` renders the chunk-recall (mint) and span-recall (warn-amber) bars in scene 5 with proper fill animation from 0 → target value (no `data-stub`, no placeholder bar)
+  3. On-screen captions are disabled in the `chunk-vs-span` composition (either by removing `<Caption>` invocations from scene components or by gating them via a per-composition flag); `pnpm render:chunk-vs-span` produces an MP4 with zero on-screen text in the caption position; the `Caption` primitive itself remains intact for other videos
+  4. `pnpm studio` previews the composition end-to-end; the existing `frames.ts` scene-contiguity runtime check still passes; visuals are coherent enough to read without VO or captions (final visual gate before audio)
+  5. The `Caption` primitive (`tools/remotion/src/primitives/Caption.tsx`) is NOT deleted or otherwise modified beyond what's needed for `chunk-vs-span` (preserve reusability for future videos)
 **Plans**: TBD
-**UI hint**: no
+**UI hint**: yes (visual polish — primitives are React components; preview in `pnpm studio` before render)
 
-### Phase 2: Session DSL + Script Runner + Cursor Compositing
-**Goal**: An author-friendly typed DSL with a fail-fast script runner, observable reporters, and a second-pass cursor compositor that turns Phase 1's raw capture into shot-ready footage with a visible, smoothly-animated cursor
+### Phase 2: Voiceover + Final Render + Ship
+**Goal**: `out/cx-agent-evals--chunk-vs-span/v02.mp4` exists with polished primitives, no captions, and ElevenLabs VO baked in — uploaded to YouTube
 **Depends on**: Phase 1
-**Requirements**: DSL-01, DSL-02, DSL-03, DSL-04, DSL-05, DSL-06, DSL-07, CUR-02, CUR-03, CLI-04, CLI-05, CLI-06
+**Requirements**: VO-01, VO-02, VO-03, VO-04, SHIP-01, SHIP-02, SHIP-03, SHIP-04
 **Success Criteria** (what must be TRUE):
-  1. `defineSession({ name, viewport, url, steps })` validates input via zod and supports all 6 step kinds with sane human-pacing defaults (800–1500ms per action; ~80ms + jitter per keystroke)
-  2. The script runner's pre-flight assertion phase walks all selectors before `recorder.start()` and aborts with zero output (no partial MP4) if any selector resolves to 0 or >1 elements
-  3. `dismissOverlays()` is a first-class DSL helper; `frameLocator()` is the path of least resistance for any third-party widget interaction (iframe-aware by default, no arbitrary `sleep`, no `networkidle` for SPAs)
-  4. The encoder's second pass composites a default cursor sprite from the `InteractionTimeline`, animating between waypoints with a 400–600ms cubic-bezier ease — visible in headless captures
-  5. `ConsoleReporter` shows step-by-step progress in real time; `JsonReporter` (`--json` flag) emits machine-readable output; mid-session failure deletes partial artifacts and prints the failing step + URL clearly
+  1. `ELEVENLABS_API_KEY` loads from `.env` (gitignored); `.env.example` committed with placeholder; missing key produces a clear error before any API call
+  2. Narration MP3(s) generated from `projects/cx-agent-evals--chunk-vs-span/script.md` using an ElevenLabs stock voice — file(s) live under `projects/cx-agent-evals--chunk-vs-span/audio/` (or `shared/assets/audio/cx-agent-evals--chunk-vs-span/`, planner's call); regen script committed alongside so the audio can be re-produced from the script alone
+  3. VO is wired into the `chunk-vs-span` composition via Remotion `<Audio>` element(s), synced so each scene's narration starts at the scene's `start` frame from `frames.ts`; audio plays cleanly in `pnpm studio` end-to-end
+  4. `pnpm render:chunk-vs-span` produces `out/cx-agent-evals--chunk-vs-span/v02.mp4` with VO baked in, polished primitives from Phase 1, and no on-screen captions; v01.mp4 is preserved for comparison
+  5. v02.mp4 is uploaded manually to YouTube; a short README note (or update to `projects/cx-agent-evals--chunk-vs-span/notes.md`) records the YouTube URL, what changed v01 → v02, and any post-render observations worth keeping
 **Plans**: TBD
-**UI hint**: no
-
-### Phase 3: Artifacts + CLI + hellotars Ship Gate (V1 SHIP)
-**Goal**: A real, runnable `pnpm capture hellotars` that produces `out/browser-capture/hellotars/v01.mp4` — usable B-roll asset, README documents the v1 capability and the v2 acceptance checklist. **This is V1.**
-**Depends on**: Phase 2
-**Requirements**: CLI-01, CLI-02, CLI-03, ART-01, ART-02, SHOT-01, SHOT-02, SHOT-03, SHOT-04
-**Success Criteria** (what must be TRUE):
-  1. `pnpm capture <session>` runs a committed session and writes the MP4 to `out/browser-capture/<session-name>/v<NN>.mp4` with auto-bumping `NN` (matches existing `out/<project>/v<NN>` convention); `pnpm capture:preview <session>` runs headful + slowMo with no recording; headless is default, `--headful` opts in
-  2. A sidecar `manifest.json` lands next to every MP4 with steps executed, duration, viewport, mode (`script`), git SHA, and ffmpeg flags
-  3. `tools/browser-capture/sessions/hellotars.ts` is committed and `pnpm capture hellotars` produces an MP4 that passes the "Looks Done But Isn't" 12-item checklist from PITFALLS.md (cursor visible, smooth typing, no banner occluding the widget, entry animation full, CFR 30fps, bt709 color tags, faststart)
-  4. The DOM-notes spike from Phase 1 informed the hellotars selectors; a `baseline.png` snapshot of the happy-path final frame is committed for future regression checks
-  5. README documents the v1 capability, how to add a new session, and the acceptance checklist for future shots
-**Plans**: TBD
-**UI hint**: no
-
-### Phase 4: Agent Mode + Codegen
-**Goal**: Hybrid input model complete — exploratory NL prompts run a Claude Agent SDK loop that captures live and auto-serializes the executed steps into a committable, replayable session script
-**Depends on**: Phase 1 (driver + recorder + encoder); Phase 3 strongly recommended so the deterministic path is proven first
-**Requirements**: AGT-01, AGT-02, AGT-03, AGT-04, AGT-05
-**Success Criteria** (what must be TRUE):
-  1. `pnpm capture:agent --prompt "<NL>"` runs a Claude Agent SDK loop with custom tools (`browser_goto`, `browser_click`, `browser_type`, `browser_waitFor`, `browser_scroll`) that wrap the same `BrowserDriver` script mode uses — each tool call emits a `Step{}` to the same recorder/reporter pipeline
-  2. Successful agent runs auto-serialize the executed step list to `tools/browser-capture/sessions/agent-<timestamp>.ts` (committable, replayable script — re-running it produces identical output deterministically)
-  3. Cost guardrails are enforced and configurable: max tool calls, max tokens, max wall-clock; defaults are conservative; exceeding any cap aborts the run and saves the partial transcript
-  4. The agent runner module is dynamically imported by the CLI — script-mode startup does not pay the SDK cost (no top-level `import '@anthropic-ai/claude-agent-sdk'`)
-  5. `ANTHROPIC_API_KEY` is loaded from `.env` (gitignored, `.env.example` committed); a missing key produces a clear error before any browser launch — never committed in source
-**Plans**: TBD
-**UI hint**: no
+**UI hint**: yes (final render review in `pnpm studio` before upload — audio sync visual check)
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 → 2
 
-(Phase 4 is technically independently developable since it shares Phase 1's primitives but not Phase 2/3's DSL or CLI surface — `parallelization=true` in config allows it. However, the user's reliability-first constraint means the deterministic path should be proven by shipping Phase 3 before agent mode is built.)
+(No parallelization opportunity — Phase 2 needs the polished primitives + caption-free composition from Phase 1 before audio sync can be verified meaningfully.)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Capture Pipeline | 0/TBD | Not started | - |
-| 2. Session DSL + Script Runner + Cursor Compositing | 0/TBD | Not started | - |
-| 3. Artifacts + CLI + hellotars Ship Gate | 0/TBD | Not started | - |
-| 4. Agent Mode + Codegen | 0/TBD | Not started | - |
+| 1. Animation Polish + Caption Removal | 0/TBD | Not started | - |
+| 2. Voiceover + Final Render + Ship | 0/TBD | Not started | - |

@@ -1,167 +1,107 @@
-# Requirements: Content Studio — `tools/browser-capture/` milestone
+# Requirements: Content Studio — Ship `chunk-vs-span` v02 to YouTube
 
-**Defined:** 2026-04-21
-**Core Value:** Cut the time from "I want to explain this idea" to "a published YouTube video" by giving Vinit a personal library of reusable, high-quality B-roll generation tools.
+**Defined:** 2026-04-22 (replaces prior browser-capture milestone — see `.planning/_archive/browser-capture-milestone/`)
+**Core Value:** Cut the time from "I want to explain this idea" to "a published YouTube video" by treating each video as a small, shippable project that uses the existing Remotion pipeline.
 
-**Milestone scope:** First version of `tools/browser-capture/` — a standalone, reusable module that drives Chromium through scripted or LLM-driven actions, records the tab as MP4, and ships a first reference shot of hellotars.com.
+**Milestone scope:** Take the existing pipeline-validation pilot at `out/cx-agent-evals--chunk-vs-span/v01.mp4` and ship it as a polished, voiceover-driven, captionless v02 to YouTube.
 
 ## v1 Requirements
 
-### Capture Pipeline
+### Animation Polish
 
-- [ ] **CAP-01**: Module captures browser tab as H.264 MP4 via streaming ffmpeg pipeline (screenshot-loop → ffmpeg stdin; **no** WebM intermediate, **not** Playwright `recordVideo`)
-- [ ] **CAP-02**: Default output 1080p (1920×1080) at 30fps CFR with `deviceScaleFactor: 1`
-- [ ] **CAP-03**: Tab-only recording — no OS chrome, no menu bars, no notifications
-- [ ] **CAP-04**: Encoder defaults bake in YouTube-friendly flags: `-c:v libx264 -pix_fmt yuv420p -crf 18 -preset slow -movflags +faststart -color_primaries bt709 -color_trc bt709 -colorspace bt709`
-- [ ] **CAP-05**: Bundled `ffmpeg-static` binary — no system ffmpeg requirement; startup version check fails loudly if binary is broken
-- [ ] **CAP-06**: Locked viewport — no resize during a session
-- [ ] **CAP-07**: Chromium launched with `--mute-audio`, `--autoplay-policy=user-gesture-required`, `--force-color-profile=srgb` to prevent ambient noise, autoplay surprises, and color drift
+- [ ] **ANIM-01**: `Chunk` primitive (`tools/remotion/src/primitives/Chunk.tsx`) loses its `data-stub` placeholder visual and animates properly — entry, idle, and any state transitions used by scene 3 — using the existing theme tokens and easings
+- [ ] **ANIM-02**: `MetricBar` primitive (`tools/remotion/src/primitives/MetricBar.tsx`) loses its `data-stub` placeholder and animates the bar fill from 0 → target value with appropriate easing, sized and colored to match the existing scene 5 layout (chunk-recall mint vs span-recall warn-amber per design notes)
+- [ ] **ANIM-03**: Polished primitives are visually coherent with the existing finished primitives (TitleCard, Caption, Document) — same theme tokens, same animation feel
+- [ ] **ANIM-04**: Composition still passes the existing scene-contiguity runtime check in `frames.ts`; no scene timing changes required
 
-### Session DSL
+### Caption Removal
 
-- [ ] **DSL-01**: TypeScript session DSL via `defineSession({ name, viewport, url, steps })` with zod runtime validation
-- [ ] **DSL-02**: Step kinds supported: `goto`, `click`, `type`, `waitFor`, `wait`, `scroll`
-- [ ] **DSL-03**: Wait strategies use `waitFor` / `waitForFunction` (no arbitrary `sleep`, no `networkidle` for SPAs)
-- [ ] **DSL-04**: Configurable per-action delays with sane human-pacing defaults (800–1500ms)
-- [ ] **DSL-05**: Per-keystroke typing delay default (≈80ms + jitter) — text never appears instantly
-- [ ] **DSL-06**: `dismissOverlays()` helper available in the DSL for cookie banners / GDPR popups
-- [ ] **DSL-07**: `frameLocator()`-first style for any third-party widget interaction (iframe-aware by default)
+- [ ] **CAP-01**: On-screen caption rendering is disabled or removed from the `chunk-vs-span` composition — no caption text appears in the rendered output
+- [ ] **CAP-02**: Caption removal is local to `chunk-vs-span` (or done via a flag/prop) — does NOT delete the `Caption` primitive itself, since future videos may use it
 
-### Cursor Realism
+### Voiceover
 
-- [ ] **CUR-01**: Recorder captures an interaction timeline (timestamp, x, y, event-kind) alongside frames
-- [ ] **CUR-02**: Encoder's second pass composites a default cursor sprite using the timeline (cursor visible in headless captures)
-- [ ] **CUR-03**: Cursor animates smoothly between waypoints (cubic-bezier ease, 400–600ms per move)
+- [ ] **VO-01**: ElevenLabs API key wired in via `.env` (gitignored); `.env.example` committed with placeholder
+- [ ] **VO-02**: Narration MP3(s) generated from the existing `projects/cx-agent-evals--chunk-vs-span/script.md` narration text via ElevenLabs stock voice (one continuous track OR per-scene tracks — Claude's choice based on simplicity)
+- [ ] **VO-03**: Generated VO file(s) committed (or `.gitignored` with a regen script — Claude's choice based on file size + reproducibility tradeoff)
+- [ ] **VO-04**: VO is wired into the `chunk-vs-span` composition via Remotion's `<Audio>` element, synced so each scene's narration starts at the scene's start frame from `frames.ts`
 
-### CLI & UX
+### Render & Ship
 
-- [ ] **CLI-01**: `pnpm capture <session>` runs a committed session and writes the MP4
-- [ ] **CLI-02**: `pnpm capture:preview <session>` runs headful + slowMo with no recording (debug-only)
-- [ ] **CLI-03**: Headless by default; `--headful` flag opts into a visible browser
-- [ ] **CLI-04**: `ConsoleReporter` shows step-by-step progress; `--json` flag emits machine-readable output
-- [ ] **CLI-05**: Pre-flight assertion phase validates all selectors before `recorder.start()` — fail-fast with zero output if any selector is broken
-- [ ] **CLI-06**: Mid-session failure deletes partial artifacts and prints failing step + URL clearly
+- [ ] **SHIP-01**: `pnpm render:chunk-vs-span` produces `out/cx-agent-evals--chunk-vs-span/v02.mp4` with polished primitives, no captions, and VO baked in
+- [ ] **SHIP-02**: v02.mp4 is reviewable in `pnpm studio` end-to-end (audio + video sync verified visually before render)
+- [ ] **SHIP-03**: Existing v01.mp4 stays in place for comparison; v02 is the new shippable artifact
+- [ ] **SHIP-04**: A short README note in `projects/cx-agent-evals--chunk-vs-span/` documents what changed between v01 and v02, and the YouTube upload status
 
-### Artifacts
+## v2 Requirements (deferred — not in this milestone)
 
-- [ ] **ART-01**: Output written to `out/browser-capture/<session-name>/v<NN>.mp4` with auto-bumping `NN` (matches existing `out/<project>/v<NN>` convention)
-- [ ] **ART-02**: Sidecar `manifest.json` per capture: steps executed, duration, viewport, mode (script|agent), model (if agent), git SHA, ffmpeg flags
+Tracked but not in current roadmap.
 
-### Agent Mode (hybrid input model)
+### Future videos
 
-- [ ] **AGT-01**: `pnpm capture:agent --prompt "<NL>"` runs a Claude Agent SDK loop with custom browser tools (`browser_goto`, `browser_click`, `browser_type`, `browser_waitFor`, `browser_scroll`) wrapping the same `BrowserDriver` script mode uses
-- [ ] **AGT-02**: Successful agent runs auto-serialize the executed step list to `tools/browser-capture/sessions/agent-<timestamp>.ts` (codegen — committable, replayable script)
-- [ ] **AGT-03**: Cost guardrails enforced: configurable max tool calls, max tokens, max wall-clock; defaults are conservative
-- [ ] **AGT-04**: Agent runner is dynamically imported — script-mode startup doesn't pay the SDK cost
-- [ ] **AGT-05**: `ANTHROPIC_API_KEY` loaded from `.env`; never committed; missing key produces a clear error before any browser launch
+- **NEXT-01**: Next video idea(s) captured under `projects/<new-slug>/` when ready
 
-### Reference Shot
+### Browser-capture milestone (preserved)
 
-- [ ] **SHOT-01**: hellotars.com session committed at `tools/browser-capture/sessions/hellotars.ts` — loads page → waits for chat widget → clicks widget → interacts (click button or scroll)
-- [ ] **SHOT-02**: Pre-implementation DOM spike documented at `.planning/research/shots/hellotars-com/dom-notes.md` (iframe? cross-origin? shadow root open/closed?)
-- [ ] **SHOT-03**: `pnpm capture hellotars` produces `out/browser-capture/hellotars/v01.mp4` that passes the "looks acceptable as B-roll" bar (cursor visible, smooth typing, no banner occluding the widget)
-- [ ] **SHOT-04**: README documents the v1 capability and the acceptance checklist for future shots
+- **DEFER-01**: Resume `tools/browser-capture/` work using the locked decisions, research, and roadmap in `.planning/_archive/browser-capture-milestone/` when timing is right
 
-## v2 Requirements
+### Other studio tools (future)
 
-Deferred to a later milestone. Tracked but not in current roadmap.
+- **STUDIO-01**: AI-generated image/video B-roll (`tools/ai-gen/`)
+- **STUDIO-02**: Talking-head capture/cleanup pipeline
+- **STUDIO-03**: Final video stitcher (`tools/editor/`, `tools/ffmpeg/`) — only if a future video needs multi-source compositing
+- **STUDIO-04**: YouTube upload automation
+- **STUDIO-05**: Word-level transcript-driven captions (Deepgram) for future videos that want on-screen text
 
-### Polish FX
+### Other primitive polish (future)
 
-- **POL-01**: Branded cursor sprite + click pulse / ripple effect
-- **POL-02**: Bezier cursor motion with ghost-cursor-style smoothing
-- **POL-03**: Click sound effects mixed in via ffmpeg post-process (sidecar metadata + NLE overlay)
-- **POL-04**: Typing sound effects mixed in via ffmpeg post-process
-- **POL-05**: Auto-zoom / pan post-processor (Screen Studio's signature feature)
-- **POL-06**: Smooth-scroll helper (CDP-based smooth wheel)
-- **POL-07**: Page-load skeleton-hiding helper (`waitForReady`)
-
-### Authoring
-
-- **AUTH-01**: NL → script scaffolder (`pnpm capture:scaffold "<prompt>"`)
-- **AUTH-02**: Multi-take recording (record N, pick best)
-- **AUTH-03**: Sidecar `events.json` substrate for v2 SFX + future editor stitching
-
-### Other Studio Tools (future milestones)
-
-- **STUDIO-01**: AI-generated image/video B-roll tool (`tools/ai-gen/`)
-- **STUDIO-02**: AI-generated voiceover (ElevenLabs) tool
-- **STUDIO-03**: Talking-head capture/cleanup pipeline
-- **STUDIO-04**: Final video stitching / FFmpeg editor (`tools/editor/`, `tools/ffmpeg/`)
-- **STUDIO-05**: YouTube upload automation
+- **PRIM-01**: Polish remaining stub primitives (Token, Span, Cursor) when a future video needs them
+- **PRIM-02**: Activate scene 4 with proper Span animation when re-shipping chunk-vs-span (post-v02)
 
 ## Out of Scope
 
-Explicitly excluded. Documented to prevent scope creep.
+Explicitly excluded for this milestone.
 
 | Feature | Reason |
 |---------|--------|
-| Multi-tenant / team workflows | Personal channel; one developer, one machine |
-| Cloud upload / SaaS integration | Out of charter — local-first tool |
-| Heavy auth orchestration (SSO, MFA) | Not needed for personal-channel B-roll |
-| robots.txt / scraping etiquette | This is not a crawler; one explicit shot at a time |
-| Cross-browser support (Firefox/WebKit) | Chromium only; saves ~600MB and ~3min on first install |
-| In-tool caption rendering | Captions live in Remotion, NLE, or YouTube |
-| Real-time streaming output | Recording for post-production; live use case absent |
-| In-tool video editing | Editing happens downstream; this tool produces raw assets |
-| Plugin / extension system | YAGNI for personal scope |
-| GUI session authoring | DSL is text — diffable, reviewable, AI-friendly |
-| Routing browser-capture MP4 into Remotion compositions | Captured MP4 is a standalone asset; Remotion stays focused on motion graphics |
-| Polishing existing Remotion stub primitives (Token, Span, Cursor, MetricBar, Chunk) | Out unless they block a current shot |
-| Multiple reference shots in v1 | Only hellotars.com; more sites earn their place when actual videos need them |
+| Word-level transcript-driven captions (Deepgram) | VO-only design — no on-screen text wanted in v02 |
+| Polish of Token / Span / Cursor primitives | Not used by chunk-vs-span; defer to videos that need them |
+| Span scene-4 activation | Card-only scene 4 is acceptable for v02 |
+| Re-recording or revising the narration script | Script.md is final for v02 |
+| Palette / typography refresh | Current mint-accent dark theme stays |
+| Building a stitcher / editor / FFmpeg tool | Remotion renders the final MP4 directly |
+| YouTube upload automation | Manual upload is acceptable for one video |
+| New video projects beyond chunk-vs-span | Each new video earns its own milestone |
+| Browser-capture tool | Deferred milestone — preserved in `_archive/` |
+| AI-generated B-roll | Future milestone |
+| Talking-head capture/cleanup | Future milestone |
 
 ## Traceability
 
+Mapping populated by roadmapper.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| ANIM-01 | Phase 1 | Pending |
+| ANIM-02 | Phase 1 | Pending |
+| ANIM-03 | Phase 1 | Pending |
+| ANIM-04 | Phase 1 | Pending |
 | CAP-01 | Phase 1 | Pending |
 | CAP-02 | Phase 1 | Pending |
-| CAP-03 | Phase 1 | Pending |
-| CAP-04 | Phase 1 | Pending |
-| CAP-05 | Phase 1 | Pending |
-| CAP-06 | Phase 1 | Pending |
-| CAP-07 | Phase 1 | Pending |
-| DSL-01 | Phase 2 | Pending |
-| DSL-02 | Phase 2 | Pending |
-| DSL-03 | Phase 2 | Pending |
-| DSL-04 | Phase 2 | Pending |
-| DSL-05 | Phase 2 | Pending |
-| DSL-06 | Phase 2 | Pending |
-| DSL-07 | Phase 2 | Pending |
-| CUR-01 | Phase 1 | Pending |
-| CUR-02 | Phase 2 | Pending |
-| CUR-03 | Phase 2 | Pending |
-| CLI-01 | Phase 3 | Pending |
-| CLI-02 | Phase 3 | Pending |
-| CLI-03 | Phase 3 | Pending |
-| CLI-04 | Phase 2 | Pending |
-| CLI-05 | Phase 2 | Pending |
-| CLI-06 | Phase 2 | Pending |
-| ART-01 | Phase 3 | Pending |
-| ART-02 | Phase 3 | Pending |
-| AGT-01 | Phase 4 | Pending |
-| AGT-02 | Phase 4 | Pending |
-| AGT-03 | Phase 4 | Pending |
-| AGT-04 | Phase 4 | Pending |
-| AGT-05 | Phase 4 | Pending |
-| SHOT-01 | Phase 3 | Pending |
-| SHOT-02 | Phase 1 | Pending |
-| SHOT-03 | Phase 3 | Pending |
-| SHOT-04 | Phase 3 | Pending |
+| VO-01 | Phase 2 | Pending |
+| VO-02 | Phase 2 | Pending |
+| VO-03 | Phase 2 | Pending |
+| VO-04 | Phase 2 | Pending |
+| SHIP-01 | Phase 2 | Pending |
+| SHIP-02 | Phase 2 | Pending |
+| SHIP-03 | Phase 2 | Pending |
+| SHIP-04 | Phase 2 | Pending |
 
 **Coverage:**
-- v1 requirements: 34 total
-- Mapped to phases: 34
-- Unmapped: 0 ✓
-
-**Phase distribution:**
-- Phase 1 (Capture Pipeline): 9 requirements (CAP-01..07, CUR-01, SHOT-02)
-- Phase 2 (Session DSL + Script Runner + Cursor Compositing): 12 requirements (DSL-01..07, CUR-02, CUR-03, CLI-04, CLI-05, CLI-06)
-- Phase 3 (Artifacts + CLI + hellotars Ship Gate): 8 requirements (CLI-01, CLI-02, CLI-03, ART-01, ART-02, SHOT-01, SHOT-03, SHOT-04)
-- Phase 4 (Agent Mode + Codegen): 5 requirements (AGT-01..05)
-
-Note: SHOT-02 (DOM spike documentation) lives in Phase 1 because it's the Phase-0 spike folded in as a Phase 1 prereq — the artifact must exist before any selector code is written, and Phase 1 is where the driver/recorder primitives that consume those selectors are built.
+- v1 requirements: 14 total
+- Mapped to phases: 14 ✓
+- Unmapped: 0
 
 ---
-*Requirements defined: 2026-04-21*
-*Last updated: 2026-04-21 after roadmap creation (traceability table populated)*
+*Requirements defined: 2026-04-22*
+*Last updated: 2026-04-22 after milestone re-scope*
