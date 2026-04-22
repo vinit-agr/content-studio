@@ -75,3 +75,6 @@ pnpm-debug.log*
 
 # Claude Code worktrees (isolated agent branches, local only)
 .claude/worktrees/
+
+# Visual brainstorming companion sessions
+.superpowers/
