@@ -49,7 +49,7 @@ function formatTimestamp(ms: number): string {
 }
 
 function parseSrt(content: string): Cue[] {
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const normalized = content.replace(/^﻿/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const blocks = normalized.trim().split(/\n\s*\n/);
   const cues: Cue[] = [];
   const timeRe = /(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)/;
