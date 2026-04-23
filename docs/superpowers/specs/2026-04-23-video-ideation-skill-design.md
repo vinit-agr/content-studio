@@ -1,7 +1,7 @@
 # `video-ideation` Skill — Design
 
 **Date:** 2026-04-23
-**Status:** approved in chat — implementation plan to follow
+**Status:** implemented (2026-04-23)
 **Author:** Vinit Agrawal (with Claude)
 **Related:** [Content Studio foundation design](./2026-04-20-content-studio-foundation-design.md)
 
