@@ -13,11 +13,15 @@ offset by the end-time of prior files.
 
 ```bash
 pnpm dlx tsx tools/transcripts/srt-to-source.ts \
-  --out projects/2026-04-23-weekly-update/source.md \
+  --out content-source/2026-04-23-weekly-update/source.md \
   --title "Weekly update — 2026-04-23" \
   --source "Loom: https://loom.com/share/..." \
   path/to/part1.srt path/to/part2.srt
 ```
+
+The output lives in `content-source/<slug>/source.md`. Keep the raw SRT files
+alongside it. The `video-ideation` skill then reads from that folder and writes
+`ideas.md` into whichever `projects/<project>/` folder you point it at.
 
 Output shape (consumed by the `video-ideation` skill):
 

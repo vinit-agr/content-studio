@@ -4,19 +4,27 @@ description: |
   Turn a Loom-style work-log transcript into a ranked shortlist of structured video ideas
   tuned to Vinit's YouTube channel (builder narrative, YouTube signal, CX-buyer relevance).
   Invoked via the /video-ideation slash command; can also be called directly by name when
-  the user asks to "find video ideas from" a transcript. Reads source.md from a session
-  folder, writes ideas.md alongside it.
+  the user asks to "find video ideas from" a transcript. Reads source.md from a content-source
+  folder, writes ideas.md into a project folder. Source and project are separate inputs so
+  the same transcript can be mined for multiple video projects.
 ---
 
 # video-ideation
 
 ## What this skill does
 
-You receive a path to a **session folder** under `projects/`. The folder contains a
-`source.md` file holding a Loom-style work-log monologue transcript. Your job: extract
-a **ranked shortlist of structured video ideas** tuned to the channel's taste function,
-write them to `<session-folder>/ideas.md`, and also print the same content to the
-conversation.
+You receive two paths: a **source folder** under `content-source/` and a **project
+folder** under `projects/`. The source folder holds raw material (Loom transcripts,
+Notion exports, Slack threads — anything that ended up as a `source.md` file). The
+project folder is the video project the ideas will feed.
+
+Your job: extract a **ranked shortlist of structured video ideas** tuned to the
+channel's taste function, write them to `<project-folder>/ideas.md`, and also print
+the same content to the conversation.
+
+The source/project split is intentional — `content-source/` is a reusable library of
+raw material, and the same source can be mined against multiple projects without
+duplicating the underlying transcript.
 
 Think of yourself as a video producer with strong editorial taste, reading a rambling
 work-log looking for the 3–5% of what was said that has real channel potential.
@@ -26,13 +34,15 @@ work-log looking for the 3–5% of what was said that has real channel potential
 Arguments come in as a single string that must be parsed:
 
 ```
-<session-folder> [--count N]
+<source-folder> <project-folder> [--count N]
 ```
+
+Both folder paths are required and positional — source first, project second.
 
 Examples:
 
-- `projects/2026-04-23-weekly-update`
-- `projects/2026-04-23-weekly-update --count 3`
+- `content-source/2026-04-23-weekly-update projects/cx-agent-evals--chunk-vs-span`
+- `content-source/2026-04-23-weekly-update projects/cx-agent-evals--chunk-vs-span --count 3`
 
 ## Validation (do this first, before anything else)
 
@@ -41,10 +51,11 @@ Run these checks in order. On any failure, print the error to the conversation a
 
 | Check                                             | Error message                                                                        |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Args provided and non-empty                       | `"No session folder provided. Usage: /video-ideation <path> [--count N]"`            |
-| Session folder exists                             | `"Session folder <path> does not exist."`                                            |
-| `<path>/source.md` exists                         | `"<path>/source.md not found. Create it with your Loom transcript first."`           |
+| Two positional paths provided (source, project)   | `"Usage: /video-ideation <source-folder> <project-folder> [--count N]"`              |
+| Source folder exists                              | `"Source folder <source> does not exist."`                                           |
+| `<source>/source.md` exists                       | `"<source>/source.md not found. Put your transcript there first."`                   |
 | Transcript body (body after the `---` separator, or whole file if no separator) ≥ 200 chars | `"source.md transcript body is too short (<200 chars) to extract ideas."` |
+| Project folder exists                             | `"Project folder <project> does not exist. Create it first."`                        |
 | `--count N` (if given) parses as positive integer | `"--count expects a positive integer (got <value>)."`                                |
 
 ## Default count (when `--count` not given)
@@ -146,14 +157,15 @@ in this order:
 
 ## Output file format
 
-Path: `<session-folder>/ideas.md`.
+Path: `<project-folder>/ideas.md`.
 
 Header:
 
 ```markdown
 # Video ideas — <human-readable session description>
 
-**Source:** <link or note from source.md frontmatter> · <word-count-based length estimate>
+**Source:** `<source-folder>/source.md` — <link or note from source.md frontmatter> · <word-count-based length estimate>
+**Project:** `<project-folder>`
 **Generated:** <YYYY-MM-DD> by /video-ideation
 **Count:** <N> (<adaptive default for range / user override>)
 
@@ -242,5 +254,5 @@ be stable in shape but not byte-identical. This is expected and not a bug.
 - Do not write `ideas.md` when validation fails.
 - Do not generate outlines, storyboards, or scripts — this skill does ideation only.
 - Do not fetch from Loom or any external source.
-- Do not auto-create `projects/<source-repo>--<video-slug>/` folders.
+- Do not auto-create folders. Both `<source-folder>` and `<project-folder>` must exist before invocation — if either is missing, report the validation error and stop.
 - Do not summarize the transcript. Your output is a ranked shortlist, not a summary.
