@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Document scene v2 — four-to-four + cursor click</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0f;
+    --bg-elevated: #141419;
+    --bg-surface: #1a1a22;
+    --bg-hover: #22222d;
+    --border: #2a2a36;
+    --border-bright: #3a3a4a;
+    --text: #e8e8ed;
+    --text-muted: #8888a0;
+    --text-dim: #55556a;
+    --accent: #6ee7b7;
+    --accent-dim: #2d6b54;
+    --accent-bright: #a7f3d0;
+    --warn: #fbbf24;
+    --error: #f87171;
+    --chunk2: #818cf8;
+    --chunk4: #f472b6;
+    --cycle: 13s;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 48px 64px;
+    background: #05050a;
+    color: var(--text);
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    line-height: 1.5;
+  }
+  h1 { margin: 0 0 4px; font-size: 22px; font-weight: 600; color: var(--text); }
+  .page-sub { margin: 0 0 28px; font-size: 13px; color: var(--text-muted); }
+  .stage-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 72px -16px rgba(0,0,0,0.8), 0 0 0 1px var(--border);
+  }
+  .stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(110,231,183,0.04), transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(129,140,248,0.03), transparent 50%),
+      var(--bg);
+    overflow: hidden;
+  }
+  .stage::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* === title === */
+  .title {
+    position: absolute; top: 6%; left: 6%;
+    font-size: clamp(16px, 2.2vw, 28px); font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; opacity: 0;
+    animation: titleFade var(--cycle) linear infinite;
+  }
+  .title .sub {
+    display: block; font-size: 0.5em; font-weight: 500;
+    color: var(--text-dim); margin-top: 6px; letter-spacing: 0.02em;
+  }
+  @keyframes titleFade {
+    0%    { opacity: 0; transform: translateY(-6px); }
+    5%    { opacity: 1; transform: translateY(0); }
+    85%   { opacity: 1; }
+    88%   { opacity: 0; }
+    100%  { opacity: 0; }
+  }
+
+  /* === format cards (left column) === */
+  .fcard {
+    position: absolute; left: 6%; width: 18%; height: 12%;
+    border-radius: 8px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    color: #0c0c0f; font-weight: 700;
+    box-shadow: 0 10px 30px -12px rgba(0,0,0,0.5);
+    opacity: 0;
+  }
+  .fcard .fmt { font-size: clamp(12px, 1.4vw, 18px); letter-spacing: 0.02em; }
+  .fcard .ex  { font-size: clamp(9px, 0.9vw, 11px); margin-top: 4px; opacity: 0.75; font-weight: 500; }
+  .fcard.pdf  { background: var(--error); top: 22%; }
+  .fcard.docx { background: var(--warn);  top: 37%; }
+  .fcard.html { background: var(--chunk2); color: var(--text); top: 52%; }
+  .fcard.gdoc { background: var(--chunk4); top: 67%; }
+  .fcard.html .ex { color: var(--text); }
+
+  .fcard.pdf  { animation: fcardPdf  var(--cycle) cubic-bezier(.2,.8,.2,1) infinite; }
+  .fcard.docx { animation: fcardDocx var(--cycle) cubic-bezier(.2,.8,.2,1) infinite; }
+  .fcard.html { animation: fcardHtml var(--cycle) cubic-bezier(.2,.8,.2,1) infinite; }
+  .fcard.gdoc { animation: fcardGdoc var(--cycle) cubic-bezier(.2,.8,.2,1) infinite; }
+
+  /* entry % points for 13s cycle:
+       0s→0%, 0.6s→4.6%, 1.2s→9.2%, 1.8s→13.8%, 2.4s→18.4%
+       3.2s→24.6%, 4.8s→36.9%, 5.0s→38.5%  */
+  @keyframes fcardPdf {
+    0%      { opacity: 0; transform: translateX(-80px); }
+    4.6%    { opacity: 1; transform: translateX(8px); }
+    6.2%    { opacity: 1; transform: translateX(0); }
+    24.6%   { opacity: 1; transform: translateX(0); }
+    34%     { opacity: 0.75; transform: translateX(140%); filter: blur(0.4px); }
+    38.5%   { opacity: 0; transform: translateX(180%); }
+    100%    { opacity: 0; transform: translateX(-80px); }
+  }
+  @keyframes fcardDocx {
+    0%      { opacity: 0; transform: translateX(-80px); }
+    9.2%    { opacity: 1; transform: translateX(8px); }
+    10.8%   { opacity: 1; transform: translateX(0); }
+    24.6%   { opacity: 1; transform: translateX(0); }
+    35%     { opacity: 0.75; transform: translateX(140%); filter: blur(0.4px); }
+    39%     { opacity: 0; transform: translateX(180%); }
+    100%    { opacity: 0; transform: translateX(-80px); }
+  }
+  @keyframes fcardHtml {
+    0%      { opacity: 0; transform: translateX(-80px); }
+    13.8%   { opacity: 1; transform: translateX(8px); }
+    15.4%   { opacity: 1; transform: translateX(0); }
+    24.6%   { opacity: 1; transform: translateX(0); }
+    36%     { opacity: 0.75; transform: translateX(140%); filter: blur(0.4px); }
+    39.5%   { opacity: 0; transform: translateX(180%); }
+    100%    { opacity: 0; transform: translateX(-80px); }
+  }
+  @keyframes fcardGdoc {
+    0%      { opacity: 0; transform: translateX(-80px); }
+    18.4%   { opacity: 1; transform: translateX(8px); }
+    20%     { opacity: 1; transform: translateX(0); }
+    24.6%   { opacity: 1; transform: translateX(0); }
+    37%     { opacity: 0.75; transform: translateX(140%); filter: blur(0.4px); }
+    40%     { opacity: 0; transform: translateX(180%); }
+    100%    { opacity: 0; transform: translateX(-80px); }
+  }
+
+  /* === normalize block === */
+  .normalize {
+    position: absolute; top: 34%; left: 38%; width: 22%; height: 32%;
+    border: 2px dashed var(--accent); border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--accent); opacity: 0;
+    animation: normalizeLife var(--cycle) linear infinite;
+  }
+  .normalize .label { font-size: clamp(13px, 1.4vw, 18px); font-weight: 600; letter-spacing: 0.01em; }
+  .normalize .sub   { font-size: clamp(9px, 0.8vw, 11px); color: var(--accent); opacity: 0.55; margin-top: 6px; letter-spacing: 0.02em; }
+  @keyframes normalizeLife {
+    0%     { opacity: 0; transform: scale(0.96); box-shadow: 0 0 0 0 rgba(110,231,183,0); }
+    10%    { opacity: 0; transform: scale(0.96); }
+    18%    { opacity: 0.9; transform: scale(1); }
+    24.6%  { opacity: 0.9; transform: scale(1); box-shadow: 0 0 0 0 rgba(110,231,183,0); }
+    30%    { opacity: 1;   transform: scale(1.02); box-shadow: 0 0 42px 6px rgba(110,231,183,0.35); }
+    36%    { opacity: 1;   transform: scale(1);     box-shadow: 0 0 28px 4px rgba(110,231,183,0.28); }
+    42%    { opacity: 0.85; transform: scale(1); box-shadow: 0 0 20px 2px rgba(110,231,183,0.2); }
+    52%    { opacity: 0.35; }
+    60%    { opacity: 0; }
+    100%   { opacity: 0; }
+  }
+
+  /* === md file list (right column) === */
+  .mdfile {
+    position: absolute; left: 66%; width: 26%; height: 11%;
+    background: var(--bg-surface);
+    border: 1px solid var(--accent-dim);
+    border-radius: 8px;
+    display: flex; align-items: center;
+    gap: 12px; padding: 0 16px;
+    color: var(--text); opacity: 0;
+    box-shadow: 0 8px 24px -10px rgba(0,0,0,0.55);
+  }
+  .mdfile .ficon {
+    width: 32px; height: 38px; flex: 0 0 32px;
+    background: var(--accent); color: #0c0c0f;
+    border-radius: 4px; position: relative;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 4px;
+    font-size: 10px; font-weight: 700;
+    box-shadow: inset -6px 0 0 0 rgba(0,0,0,0.08);
+  }
+  .mdfile .ficon::before {
+    content: "";
+    position: absolute; top: 0; right: 0;
+    border-top: 10px solid var(--bg-surface);
+    border-left: 10px solid transparent;
+  }
+  .mdfile .ficon span { position: relative; z-index: 1; }
+  .mdfile .meta { flex: 1; display: flex; flex-direction: column; }
+  .mdfile .fname { color: var(--accent); font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; }
+  .mdfile .src   { color: var(--text-dim); font-size: clamp(9px, 0.8vw, 10px); margin-top: 3px; letter-spacing: 0.02em; }
+  .mdfile.f1 { top: 20%; }
+  .mdfile.f2 { top: 34%; }
+  .mdfile.f3 { top: 48%; }
+  .mdfile.f4 { top: 62%; }
+
+  /* entry keyframes for .md files — emerge from right edge of normalize box (~60% left) */
+  .mdfile.f1 { animation: mdEnter1 var(--cycle) cubic-bezier(.2,.9,.2,1) infinite; }
+  .mdfile.f2 { animation: mdEnter2 var(--cycle) cubic-bezier(.2,.9,.2,1) infinite; }
+  .mdfile.f3 { animation: mdEnter3 var(--cycle) cubic-bezier(.2,.9,.2,1) infinite; }
+  .mdfile.f4 { animation: mdEnter4 var(--cycle) cubic-bezier(.2,.9,.2,1) infinite; }
+
+  /* emergence timing (13s cycle):
+       f1: 38.5% (5.0s) — overshoot peak 42%, settled 44%
+       f2: 40.8% (5.3s)
+       f3: 43.1% (5.6s)
+       f4: 45.4% (5.9s)
+       cursor-click moment: 61.5% (8.0s)
+       f1 expands & others fade: 63% (8.2s) */
+  @keyframes mdEnter1 {
+    0%      { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    38.5%   { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    41%     { opacity: 1; transform: translateX(6%) scale(1.03); }
+    44%     { opacity: 1; transform: translateX(0) scale(1); box-shadow: 0 0 0 1px rgba(110,231,183,0); }
+    60%     { opacity: 1; transform: translateX(0) scale(1); box-shadow: 0 0 0 1px rgba(110,231,183,0); }
+    61.5%   { opacity: 1; transform: translateX(0) scale(1); box-shadow: 0 0 0 2px rgba(110,231,183,0.85); border-color: var(--accent); }
+    63%     { opacity: 1; transform: translateX(0) scale(1.04); }
+    65%     { opacity: 0; transform: translateX(0) scale(1.08); }
+    100%    { opacity: 0; transform: translateX(-110%) scale(0.86); }
+  }
+  @keyframes mdEnter2 {
+    0%      { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    40.8%   { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    43%     { opacity: 1; transform: translateX(6%) scale(1.03); }
+    46%     { opacity: 1; transform: translateX(0) scale(1); }
+    62%     { opacity: 1; transform: translateX(0) scale(1); }
+    64%     { opacity: 0.15; transform: translateX(0) scale(0.96); }
+    67%     { opacity: 0; }
+    100%    { opacity: 0; transform: translateX(-110%) scale(0.86); }
+  }
+  @keyframes mdEnter3 {
+    0%      { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    43.1%   { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    45%     { opacity: 1; transform: translateX(6%) scale(1.03); }
+    48%     { opacity: 1; transform: translateX(0) scale(1); }
+    62%     { opacity: 1; transform: translateX(0) scale(1); }
+    64%     { opacity: 0.15; transform: translateX(0) scale(0.96); }
+    67%     { opacity: 0; }
+    100%    { opacity: 0; transform: translateX(-110%) scale(0.86); }
+  }
+  @keyframes mdEnter4 {
+    0%      { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    45.4%   { opacity: 0; transform: translateX(-110%) scale(0.86); }
+    47%     { opacity: 1; transform: translateX(6%) scale(1.03); }
+    50%     { opacity: 1; transform: translateX(0) scale(1); }
+    62%     { opacity: 1; transform: translateX(0) scale(1); }
+    64%     { opacity: 0.15; transform: translateX(0) scale(0.96); }
+    67%     { opacity: 0; }
+    100%    { opacity: 0; transform: translateX(-110%) scale(0.86); }
+  }
+
+  /* === cursor === */
+  .cursor {
+    position: absolute;
+    width: 28px; height: 28px;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    animation: cursorPath var(--cycle) cubic-bezier(.35,.1,.3,1) infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  }
+  .cursor svg { width: 100%; height: 100%; display: block; }
+  /* cursor timeline:
+       appears at 52% (6.76s) bottom-right
+       moves toward f1 until 60% (7.8s)
+       clicks at 61.5% (8.0s)
+       fades 66% (8.58s) */
+  @keyframes cursorPath {
+    0%,50%   { opacity: 0; left: 88%; top: 82%; transform: scale(0.8); }
+    52%      { opacity: 1; left: 88%; top: 82%; transform: scale(1); }
+    60%      { opacity: 1; left: 70%; top: 25%; transform: scale(1); }
+    61%      { opacity: 1; left: 70%; top: 25%; transform: scale(0.9); }
+    62%      { opacity: 1; left: 70%; top: 25%; transform: scale(1); }
+    66%      { opacity: 1; left: 70%; top: 25%; transform: scale(1); }
+    68%      { opacity: 0; left: 70%; top: 25%; transform: scale(1); }
+    100%     { opacity: 0; left: 88%; top: 82%; transform: scale(0.8); }
+  }
+
+  /* === click ring (appears over f1 at click moment) === */
+  .click-ring {
+    position: absolute; left: 66%; top: 20%;
+    width: 26%; height: 11%;
+    border-radius: 8px;
+    opacity: 0;
+    border: 2px solid var(--accent);
+    animation: ringPulse var(--cycle) ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes ringPulse {
+    0%,61%    { opacity: 0; transform: scale(1); }
+    61.5%     { opacity: 0.9; transform: scale(1); }
+    63%       { opacity: 0.5; transform: scale(1.12); }
+    64%       { opacity: 0; transform: scale(1.24); }
+    100%      { opacity: 0; transform: scale(1); }
+  }
+
+  /* === expanded md card (after click) === */
+  .mdcard {
+    position: absolute; top: 14%; left: 26%; width: 62%; height: 72%;
+    background: var(--bg-surface);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 22px 26px;
+    color: var(--text); opacity: 0;
+    display: flex; flex-direction: column; gap: 10px;
+    box-shadow: 0 24px 60px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(110,231,183,0.2), 0 0 40px 4px rgba(110,231,183,0.15);
+    animation: mdCardLife var(--cycle) cubic-bezier(.2,.9,.2,1) infinite;
+    transform-origin: 100% 10%;
+  }
+  @keyframes mdCardLife {
+    0%,62%   { opacity: 0; transform: scale(0.3) translate(40%, -40%); }
+    64%      { opacity: 1; transform: scale(1.02) translate(0,0); }
+    66%      { opacity: 1; transform: scale(1) translate(0,0); }
+    86%      { opacity: 1; transform: scale(1); }
+    89%      { opacity: 0; transform: scale(1.02); }
+    100%     { opacity: 0; transform: scale(0.3) translate(40%, -40%); }
+  }
+  .mdcard .head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .mdcard .fname { color: var(--accent); font-weight: 700; font-size: 14px; }
+  .mdcard .badge {
+    font-size: 10px; color: var(--accent); background: var(--accent-dim);
+    padding: 3px 10px; border-radius: 999px;
+    letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600;
+    opacity: 0; animation: badgeIn var(--cycle) ease-out infinite;
+  }
+  @keyframes badgeIn {
+    0%,76%   { opacity: 0; transform: scale(0.85); }
+    78%      { opacity: 1; transform: scale(1.08); }
+    80%      { opacity: 1; transform: scale(1); }
+    86%      { opacity: 1; }
+    89%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  .mdcard h1m {
+    display: block; color: var(--accent);
+    font-size: clamp(18px, 2.1vw, 26px); font-weight: 700;
+    margin: 4px 0 0; letter-spacing: -0.01em;
+  }
+  .mdcard p {
+    color: var(--text-muted);
+    font-size: clamp(11px, 1.1vw, 14px);
+    line-height: 1.7; margin: 0;
+  }
+  .mdcard p .hi {
+    background: rgba(251, 191, 36, 0.18); color: var(--warn);
+    padding: 1px 6px; border-radius: 3px; font-weight: 600;
+  }
+  .mdcard h2m {
+    display: block; color: var(--accent);
+    font-size: clamp(13px, 1.4vw, 17px); font-weight: 700;
+    margin-top: 6px;
+  }
+  .mdcard ul {
+    margin: 0; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .mdcard li {
+    color: var(--text-muted);
+    font-size: clamp(10px, 1vw, 13px); line-height: 1.7;
+  }
+  .mdcard li::before { content: "- "; color: var(--accent); font-weight: 700; }
+
+  .mdline { opacity: 0; }
+  .mdcard .l1 { animation: lineIn1 var(--cycle) ease-out infinite; }
+  .mdcard .l2 { animation: lineIn2 var(--cycle) ease-out infinite; }
+  .mdcard .l3 { animation: lineIn3 var(--cycle) ease-out infinite; }
+  .mdcard .b1 { animation: lineInB1 var(--cycle) ease-out infinite; }
+  .mdcard .b2 { animation: lineInB2 var(--cycle) ease-out infinite; }
+  .mdcard .b3 { animation: lineInB3 var(--cycle) ease-out infinite; }
+  /* line reveal staggered 66% → 78% (~8.58s → 10.14s) */
+  @keyframes lineIn1 {
+    0%,66%  { opacity: 0; transform: translateY(4px); }
+    68%     { opacity: 1; transform: translateY(0); }
+    86%     { opacity: 1; }
+    89%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+  @keyframes lineIn2 {
+    0%,69%  { opacity: 0; transform: translateY(4px); }
+    70.5%   { opacity: 1; transform: translateY(0); }
+    86%     { opacity: 1; }
+    89%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+  @keyframes lineIn3 {
+    0%,72%  { opacity: 0; transform: translateY(4px); }
+    73.5%   { opacity: 1; transform: translateY(0); }
+    86%     { opacity: 1; }
+    89%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+  @keyframes lineInB1 {
+    0%,74%  { opacity: 0; transform: translateY(4px); }
+    75.3%   { opacity: 1; transform: translateY(0); }
+    86%     { opacity: 1; }
+    89%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+  @keyframes lineInB2 {
+    0%,75.5%{ opacity: 0; transform: translateY(4px); }
+    76.8%   { opacity: 1; transform: translateY(0); }
+    86%     { opacity: 1; }
+    89%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+  @keyframes lineInB3 {
+    0%,77%  { opacity: 0; transform: translateY(4px); }
+    78.3%   { opacity: 1; transform: translateY(0); }
+    86%     { opacity: 1; }
+    89%     { opacity: 0; }
+    100%    { opacity: 0; }
+  }
+
+  /* === caption === */
+  .caption {
+    position: absolute; left: 0; right: 0; bottom: 4%;
+    text-align: center;
+    font-size: clamp(11px, 1.1vw, 15px);
+    color: var(--text-muted); letter-spacing: 0.02em; opacity: 0;
+    animation: captionLife var(--cycle) ease-out infinite;
+  }
+  .caption .arrow { color: var(--accent); font-weight: 700; margin: 0 10px; }
+  @keyframes captionLife {
+    0%    { opacity: 0; }
+    10%   { opacity: 0; }
+    18%   { opacity: 0.9; }
+    85%   { opacity: 0.9; }
+    88%   { opacity: 0; }
+    100%  { opacity: 0; }
+  }
+
+  /* === narration strip === */
+  .narration {
+    margin: 22px auto 0; max-width: 1200px; padding: 18px 24px;
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px; color: var(--text-muted);
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .narration .label {
+    flex: 0 0 92px; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-dim); padding-top: 2px;
+  }
+  .narration-text {
+    flex: 1; position: relative; min-height: 48px;
+    color: var(--text); font-size: 14px; line-height: 1.7; font-style: italic;
+  }
+  .nphrase { position: absolute; left: 0; right: 0; opacity: 0; top: 0; }
+  /* narration beats — 13s cycle:
+       0.6s=4.6% "A document is anything with text"
+       0.6–1.2s=4.6–9.2% "— a report,"
+       1.8–2.4s=13.8–18.4% "a web page,"
+       2.4–3.2s=18.4–24.6% "a Google Doc."
+       5.0–7.0s=38.5–53.8% "All of it becomes clean Markdown."
+       7.0–8.5s=53.8–65.4% "One format, one system."
+       8.5–9.8s=65.4–75.4% "Next, we chunk." */
+  @keyframes nb1 {
+    0%,0.3%  { opacity: 0; }
+    1%       { opacity: 1; }
+    7%       { opacity: 1; }
+    9%       { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  @keyframes nb2 {
+    0%,4%    { opacity: 0; }
+    5.2%     { opacity: 1; }
+    11%      { opacity: 1; }
+    13%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  @keyframes nb3 {
+    0%,13%   { opacity: 0; }
+    14.5%    { opacity: 1; }
+    19%      { opacity: 1; }
+    21%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  @keyframes nb4 {
+    0%,20%   { opacity: 0; }
+    21.5%    { opacity: 1; }
+    25.5%    { opacity: 1; }
+    27%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  @keyframes nb5 {
+    0%,37%   { opacity: 0; }
+    39%      { opacity: 1; }
+    53.8%    { opacity: 1; }
+    55%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  @keyframes nb6 {
+    0%,55%   { opacity: 0; }
+    56.5%    { opacity: 1; }
+    65.4%    { opacity: 1; }
+    67%      { opacity: 0; }
+    100%     { opacity: 0; }
+  }
+  @keyframes nb7 {
+    0%,66%   { opacity: 0; }
+    68%      { opacity: 1; transform: translateX(0); }
+    86%      { opacity: 1; transform: translateX(0); }
+    88%      { opacity: 0; transform: translateX(6px); }
+    100%     { opacity: 0; }
+  }
+  .nphrase.n1 { animation: nb1 var(--cycle) linear infinite; }
+  .nphrase.n2 { animation: nb2 var(--cycle) linear infinite; }
+  .nphrase.n3 { animation: nb3 var(--cycle) linear infinite; }
+  .nphrase.n4 { animation: nb4 var(--cycle) linear infinite; }
+  .nphrase.n5 { animation: nb5 var(--cycle) linear infinite; }
+  .nphrase.n6 { animation: nb6 var(--cycle) linear infinite; }
+  .nphrase.n7 { animation: nb7 var(--cycle) linear infinite; }
+
+  /* === scrubber === */
+  .scrub {
+    margin: 16px auto 0; max-width: 1200px;
+    height: 4px; background: var(--bg-elevated);
+    border-radius: 999px; overflow: hidden; position: relative;
+  }
+  .scrub::after {
+    content: "";
+    position: absolute; top: 0; left: 0; bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+    border-radius: 999px;
+    animation: scrubFill var(--cycle) linear infinite;
+  }
+  @keyframes scrubFill {
+    0%   { width: 0%; }
+    88%  { width: 100%; opacity: 1; }
+    89%  { width: 100%; opacity: 0; }
+    90%  { width: 0%; opacity: 0; }
+    91%  { opacity: 1; }
+    100% { width: 0%; }
+  }
+
+  .legend {
+    margin: 28px auto 0; max-width: 1200px;
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 20px; font-size: 12px; color: var(--text-muted);
+  }
+  .legend h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-dim); margin: 0 0 10px; font-weight: 600;
+  }
+  .legend ul { margin: 0; padding-left: 18px; line-height: 1.7; }
+  .legend code { color: var(--accent); background: var(--bg-elevated); padding: 1px 6px; border-radius: 3px; font-size: 11px; }
+</style>
+</head>
+<body>
+  <h1>Document scene v2 — four files + cursor click (loops every 13s)</h1>
+  <p class="page-sub">4 formats → normalize → 4 corresponding <code>.md</code> files on the right → cursor appears, clicks the first → it expands into the content of that file. Total run-time ~10.5s + brief hold.</p>
+
+  <div class="stage-wrapper">
+    <div class="stage">
+      <div class="title">The Document<span class="sub">0:05 – 0:15 · scene 2</span></div>
+
+      <div class="fcard pdf"><span class="fmt">PDF</span><span class="ex">annual report</span></div>
+      <div class="fcard docx"><span class="fmt">DOCX</span><span class="ex">case study</span></div>
+      <div class="fcard html"><span class="fmt">HTML</span><span class="ex">blog post</span></div>
+      <div class="fcard gdoc"><span class="fmt">GDoc</span><span class="ex">meeting notes</span></div>
+
+      <div class="normalize">
+        <div class="label">normalize</div>
+        <div class="sub">strip formatting · keep structure</div>
+      </div>
+
+      <div class="mdfile f1">
+        <div class="ficon"><span>md</span></div>
+        <div class="meta"><div class="fname">annual-report.md</div><div class="src">from PDF</div></div>
+      </div>
+      <div class="mdfile f2">
+        <div class="ficon"><span>md</span></div>
+        <div class="meta"><div class="fname">case-study.md</div><div class="src">from DOCX</div></div>
+      </div>
+      <div class="mdfile f3">
+        <div class="ficon"><span>md</span></div>
+        <div class="meta"><div class="fname">blog-post.md</div><div class="src">from HTML</div></div>
+      </div>
+      <div class="mdfile f4">
+        <div class="ficon"><span>md</span></div>
+        <div class="meta"><div class="fname">meeting-notes.md</div><div class="src">from GDoc</div></div>
+      </div>
+
+      <div class="click-ring"></div>
+
+      <div class="cursor">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 2 L3 18 L7.5 14.5 L10 21 L13 20 L10.5 13.5 L17 13 Z"
+                fill="#e8e8ed" stroke="#0c0c0f" stroke-width="1" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="mdcard">
+        <div class="head">
+          <span class="fname">annual-report.md</span>
+          <span class="badge">LLM-native</span>
+        </div>
+        <div class="mdline l1"><h1m># 2024 Annual Report</h1m></div>
+        <div class="mdline l2"><p>Q3 revenue grew <span class="hi">**32%**</span> year-over-year, led by enterprise adoption.</p></div>
+        <div class="mdline l3"><h2m>## Highlights</h2m></div>
+        <ul>
+          <li class="mdline b1">Expanded to 18 new markets</li>
+          <li class="mdline b2">Shipped Tars v4.0</li>
+          <li class="mdline b3">2.4M active developers</li>
+        </ul>
+      </div>
+
+      <div class="caption">Any text source <span class="arrow">→</span> one Markdown file per document</div>
+    </div>
+  </div>
+
+  <div class="scrub" aria-hidden="true"></div>
+
+  <div class="narration">
+    <div class="label">Narration</div>
+    <div class="narration-text">
+      <div class="nphrase n1">"A document is anything with text"</div>
+      <div class="nphrase n2">"— a report,"</div>
+      <div class="nphrase n3">"a web page,"</div>
+      <div class="nphrase n4">"a Google Doc."</div>
+      <div class="nphrase n5">"All of it becomes clean Markdown."</div>
+      <div class="nphrase n6">"One format, one system."</div>
+      <div class="nphrase n7">"Next, we chunk."</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div>
+      <h3>What changed vs v1</h3>
+      <ul>
+        <li>Normalize output is now <strong>four</strong> <code>.md</code> files, one per input — preserves the many-to-many mapping.</li>
+        <li>Each file card shows <code>annual-report.md</code>, <code>case-study.md</code>, <code>blog-post.md</code>, <code>meeting-notes.md</code> with a small folded-corner <code>.md</code> icon and a "from PDF / from DOCX / …" source hint.</li>
+        <li>A cursor enters from the bottom-right, moves to the first file, clicks — ring pulse confirms interaction.</li>
+        <li>The clicked file scales up from its own position into the full structured-markdown card (origin top-right, so it <em>grows out of</em> where the cursor clicked).</li>
+        <li>Other three files dim and fade when the click lands, so focus stays on the selected document.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Beat timing (13s loop, 10.5s scene)</h3>
+      <ul>
+        <li>0.0–3.2s — 4 format icons cascade in</li>
+        <li>3.2–5.0s — flow right into <code>normalize</code> box</li>
+        <li>5.0–6.0s — 4 <code>.md</code> files emerge one-by-one on the right</li>
+        <li>6.8–8.0s — cursor enters, moves to <code>annual-report.md</code></li>
+        <li>8.0s — click (ring pulse)</li>
+        <li>8.2–10.2s — clicked file expands to content; heading, paragraph, highlight, bullets, LLM-native badge cascade in</li>
+        <li>10.2–10.5s — hold · then loop reset</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

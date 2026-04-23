@@ -6,7 +6,7 @@ import type { SceneName } from './frames';
 
 export const CAPTIONS = {
   intro: 'Chunk vs span — a quick tour of two recall metrics.',
-  document: 'Consider this document.',
+  document: 'Any text source → one Markdown file per document',
   chunking: 'Split the document into chunks. Each becomes a retrieval unit.',
   span: 'The true answer lives in this character span.',
   comparison: 'Chunk-level recall: 1.0.   Span-level recall: 0.4.',
