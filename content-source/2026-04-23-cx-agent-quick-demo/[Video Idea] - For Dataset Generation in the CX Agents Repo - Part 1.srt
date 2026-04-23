@@ -1,0 +1,1095 @@
+1
+00:00:00,011 --> 00:00:04,525
+Hey,
+
+2
+00:00:04,526 --> 00:00:08,442
+everyone. So, I want to talk about,
+
+3
+00:00:08,443 --> 00:00:12,728
+uh, how I'm making the,
+
+4
+00:00:12,729 --> 00:00:15,019
+uhm,
+
+5
+00:00:15,030 --> 00:00:17,173
+an evaluation system. And, basically,
+
+6
+00:00:17,174 --> 00:00:20,403
+a CX agent builder and evaluation system,
+
+7
+00:00:20,487 --> 00:00:22,811
+basically, right? And, uhm,
+
+8
+00:00:22,822 --> 00:00:25,151
+as part of this whole journey, today,
+
+9
+00:00:25,152 --> 00:00:30,422
+I want to talk about how can I generate a really good dataset
+
+10
+00:00:30,423 --> 00:00:35,209
+against which I can evaluate. Or test my CX
+
+11
+00:00:35,210 --> 00:00:38,119
+agent that I want to deploy for my customers,
+
+12
+00:00:38,120 --> 00:00:40,879
+which are basically businesses in, uh,
+
+13
+00:00:40,880 --> 00:00:44,125
+B2C domain, primarily, but it can be more than that as well,
+
+14
+00:00:44,126 --> 00:00:46,209
+right? So, as part of that,
+
+15
+00:00:46,210 --> 00:00:48,973
+uhm, so if you, just a quick background for that. Good context.
+
+16
+00:00:50,055 --> 00:00:52,296
+We, uh, basically have, uh,
+
+17
+00:00:52,306 --> 00:00:55,366
+by CX agent I mean is like something which is,
+
+18
+00:00:55,367 --> 00:00:58,191
+uh, sitting on your website on your,
+
+19
+00:00:58,192 --> 00:01:00,418
+uh, as a widget, uh,
+
+20
+00:01:00,429 --> 00:01:02,470
+on your, uh, for example, here,
+
+21
+00:01:02,471 --> 00:01:06,398
+this is our website and, uh, you can click on this and,
+
+22
+00:01:06,399 --> 00:01:09,687
+uh, it sits like a chat widget where you can say,
+
+23
+00:01:09,688 --> 00:01:12,208
+hey, uh,
+
+24
+00:01:12,219 --> 00:01:17,026
+tell me about your
+
+25
+00:01:20,016 --> 00:01:22,066
+company,
+
+26
+00:01:23,349 --> 00:01:26,705
+TARS. So,
+
+27
+00:01:26,706 --> 00:01:29,316
+uh, it'll just respond to me, uh,
+
+28
+00:01:29,327 --> 00:01:32,386
+tell me about the company and, uh,
+
+29
+00:01:32,397 --> 00:01:36,011
+obviously, TARS is a delivery service.
+
+30
+00:01:36,012 --> 00:01:38,257
+We're known for delivering high,
+
+31
+00:01:38,828 --> 00:01:43,672
+highly personalized, result-driven AI agent that automate conversations and boost engagements.
+
+32
+00:01:44,307 --> 00:01:46,436
+So, yeah, that is what we do. We basically,
+
+33
+00:01:46,437 --> 00:01:50,795
+uh,
+
+34
+00:01:50,806 --> 00:01:53,034
+make these, uh, AI agents,
+
+35
+00:01:53,035 --> 00:01:56,722
+which are basically sitting on your website as a widget or on your,
+
+36
+00:01:56,723 --> 00:01:59,280
+uh, uhm,
+
+37
+00:01:59,291 --> 00:02:02,015
+WhatsApp number, on your email. So, it's like a CX solution.
+
+38
+00:02:02,016 --> 00:02:04,141
+It's like pretty much typical CX solution,
+
+39
+00:02:04,142 --> 00:02:06,636
+nothing super fancy there, uh,
+
+40
+00:02:06,646 --> 00:02:09,098
+but very, uh, important problem.
+
+41
+00:02:09,099 --> 00:02:11,496
+Uhm,
+
+42
+00:02:11,507 --> 00:02:15,287
+so, in this one, I'm going to,
+
+43
+00:02:16,223 --> 00:02:19,124
+so you need to have an agent which will basically answer to users' questions
+
+44
+00:02:19,421 --> 00:02:21,841
+and basically help them with whatever they want, right? So,
+
+45
+00:02:21,842 --> 00:02:24,011
+very broadly speaking, uhm,
+
+46
+00:02:24,012 --> 00:02:26,127
+basically, the kind of customers that will come there,
+
+47
+00:02:26,128 --> 00:02:29,127
+especially, either in the, uh,
+
+48
+00:02:29,138 --> 00:02:32,554
+pre-sale stage, they, the, the agent is supposed to basically help them,
+
+49
+00:02:33,045 --> 00:02:35,614
+you know, understand the product and do, you know, some kind of,
+
+50
+00:02:35,615 --> 00:02:39,307
+you know, sales, sales or selling, or, you know, consultative selling and if they're
+
+51
+00:02:39,308 --> 00:02:41,860
+already a customer, uh, then it will basically help them,
+
+52
+00:02:41,861 --> 00:02:43,944
+you know, in terms of support and, uh,
+
+53
+00:02:43,955 --> 00:02:46,694
+understanding what they want and helping them and, uh,
+
+54
+00:02:46,705 --> 00:02:48,837
+maybe, uh,
+
+55
+00:02:48,838 --> 00:02:52,019
+if, uh, if, uh, configured, it can be in the expansion mode as well,
+
+56
+00:02:52,020 --> 00:02:54,406
+where, uh, it will try to up-sell and cross-sell,
+
+57
+00:02:54,407 --> 00:02:58,612
+those kind of stuff, right? But anyway, that's what it Whatever it is doing,
+
+58
+00:02:58,613 --> 00:03:03,323
+it's basically interacting with the customer to help them answer questions or
+
+59
+00:03:03,324 --> 00:03:05,658
+to do things on their behalf. So, this is a very broad level of
+
+60
+00:03:05,659 --> 00:03:08,019
+two things, which, uh, I'm just putting in,
+
+61
+00:03:08,020 --> 00:03:11,707
+this is what basically the CX agents do essentially for the CX use cases,
+
+62
+00:03:11,708 --> 00:03:15,614
+basically. Customer experience use case, which is customer support or customer sales,
+
+63
+00:03:15,615 --> 00:03:19,078
+right? Um, online sales or digital sales kind of,
+
+64
+00:03:19,079 --> 00:03:21,336
+uh, channel, right?
+
+65
+00:03:22,065 --> 00:03:25,069
+So, um,
+
+66
+00:03:25,079 --> 00:03:28,522
+so as part of this thing, whenever there's an interaction happening,
+
+67
+00:03:28,523 --> 00:03:33,165
+there's either customers asking a question or they're asking for some request to
+
+68
+00:03:33,166 --> 00:03:37,743
+take some action. For example, uh, help them book a meeting or
+
+69
+00:03:37,807 --> 00:03:40,088
+send an email or create a ticket or,
+
+70
+00:03:40,089 --> 00:03:44,005
+uh, uh, file a complaint or make a sale.
+
+71
+00:03:44,006 --> 00:03:47,448
+You know, purchase something or whatever, right? So these are all things like actions
+
+72
+00:03:47,449 --> 00:03:50,593
+that they want to get done on their behalf. But the other aspect is
+
+73
+00:03:50,594 --> 00:03:53,764
+they want to understand about how the product works, uh,
+
+74
+00:03:53,775 --> 00:03:56,056
+what is the pricing looks like, and, uh,
+
+75
+00:03:56,067 --> 00:03:59,105
+how can, uh, they use it, do they have this feature,
+
+76
+00:03:59,106 --> 00:04:01,242
+you know, or how do you solve it. So they have a lot of
+
+77
+00:04:01,243 --> 00:04:02,846
+questions about, uhm, in the pre-sales stage and after that, how,
+
+78
+00:04:07,536 --> 00:04:08,682
+uh, I'm having issues with this particular feature, you know, how can I fix
+
+79
+00:04:08,683 --> 00:04:12,195
+it, or, do we have this feature,
+
+80
+00:04:12,196 --> 00:04:15,092
+I cannot find it, right, or I I don't know how to do it,
+
+81
+00:04:15,093 --> 00:04:18,564
+right, or maybe I maybe, uhm,
+
+82
+00:04:18,565 --> 00:04:20,935
+uh, can I, you know, add more team members, uh,
+
+83
+00:04:20,946 --> 00:04:23,219
+and do we have a team plan, something like that, I want to upgrade,
+
+84
+00:04:23,609 --> 00:04:25,881
+you know, those kind of things. Uh,
+
+85
+00:04:25,892 --> 00:04:30,646
+basically, any of those things will be a mix of two
+
+86
+00:04:30,647 --> 00:04:32,991
+of these atomic tasks, you know, in my head, uh,
+
+87
+00:04:33,002 --> 00:04:36,269
+to keep things simple, which is one, to either ask questions or take some
+
+88
+00:04:36,270 --> 00:04:39,147
+actions, right? So, as part of the first thing,
+
+89
+00:04:39,148 --> 00:04:42,479
+which is to ask questions and get a really good response and,
+
+90
+00:04:42,862 --> 00:04:45,399
+and, uh, very, uhm,
+
+91
+00:04:45,410 --> 00:04:49,746
+detailed and very, uh, uhm, uh, helpful response.
+
+92
+00:04:50,316 --> 00:04:52,786
+So in that case, uhm, uh,
+
+93
+00:04:52,797 --> 00:04:56,810
+the most important tool or most important thing is basically knowledge retrieval and,
+
+94
+00:04:56,811 --> 00:05:00,168
+and basically that's what, uh, that's why in my oral,
+
+95
+00:05:00,169 --> 00:05:03,568
+overall CX agent system, I'm much more focused or I'm,
+
+96
+00:05:03,569 --> 00:05:06,350
+I'm, I'm, I'm focusing a lot right now and as part of this development
+
+97
+00:05:06,351 --> 00:05:08,450
+journey to on retrievers essentially,
+
+98
+00:05:08,451 --> 00:05:13,007
+right? So retriever is basically something like where you give
+
+99
+00:05:13,008 --> 00:05:16,658
+it a bunch of documents, which are the KB that has six documents,
+
+100
+00:05:16,659 --> 00:05:20,011
+it has other documents. So as you get a different different,
+
+101
+00:05:20,384 --> 00:05:22,764
+uh, uh, knowledge bases,
+
+102
+00:05:23,408 --> 00:05:26,975
+for each of the knowledge base, you can create different kind of retrievers.
+
+103
+00:05:27,927 --> 00:05:31,384
+And, uh,
+
+104
+00:05:31,395 --> 00:05:34,236
+so again, I'll not go into this in detail, but basically you can create
+
+105
+00:05:34,237 --> 00:05:36,693
+all the configuration about how it works. How it is indexed,
+
+106
+00:05:36,820 --> 00:05:39,049
+or how you can query it, uh,
+
+107
+00:05:39,059 --> 00:05:42,407
+you know, and different approaches and different rag, these are basically different rag approaches,
+
+108
+00:05:42,907 --> 00:05:45,274
+but, uh, it has some other, uh,
+
+109
+00:05:45,284 --> 00:05:48,061
+kind of text, um, basically full text search as well as VN25,
+
+110
+00:05:48,062 --> 00:05:51,387
+right, you can have hybrid search, and for each of them you can set
+
+111
+00:05:51,388 --> 00:05:56,130
+the corresponding password. And you can also add refinement to
+
+112
+00:05:56,984 --> 00:05:59,558
+do re-ranking, threshold-based,
+
+113
+00:05:59,559 --> 00:06:01,588
+uh, refinement,
+
+114
+00:06:02,058 --> 00:06:04,605
+deduplication, so there are different techniques,
+
+115
+00:06:04,606 --> 00:06:07,686
+you know, that you can use to do refinement, and then finally you can
+
+116
+00:06:07,687 --> 00:06:12,392
+query it. create this retriever, so this is very customisable retrievalment
+
+117
+00:06:12,393 --> 00:06:15,067
+system, so again, I'll, uh,
+
+118
+00:06:15,078 --> 00:06:17,402
+not go too deep into this thing, in this, uh,
+
+119
+00:06:17,412 --> 00:06:21,248
+call, or in this video. So,
+
+120
+00:06:23,032 --> 00:06:25,727
+I'll come back to her. Um, dataset generation and,
+
+121
+00:06:26,185 --> 00:06:29,143
+so, it's part of figuring out what is a good retrieval,
+
+122
+00:06:29,144 --> 00:06:32,336
+and, uh, for a dataset and in general,
+
+123
+00:06:33,029 --> 00:06:35,587
+and how does it work. So, we need to evaluate the retrieval,
+
+124
+00:06:35,597 --> 00:06:37,703
+and retrieval evaluation is something very important,
+
+125
+00:06:37,704 --> 00:06:40,448
+and, uh, I don't think it's going to influence to be,
+
+126
+00:06:40,449 --> 00:06:43,107
+uh, I mean, there's always going to be,
+
+127
+00:06:43,428 --> 00:06:46,007
+maybe there's a technique which comes and which works really well,
+
+128
+00:06:46,008 --> 00:06:48,884
+and, uh, there's no need for all this system.
+
+129
+00:06:49,248 --> 00:06:51,640
+We just use that. Maybe that will happen, uh,
+
+130
+00:06:51,651 --> 00:06:54,710
+and that, that will be great, but until that does not happen,
+
+131
+00:06:54,711 --> 00:06:57,396
+we have to have this evaluation system. You can try a lot of things,
+
+132
+00:06:57,397 --> 00:07:00,781
+right, and especially when you are working in a very diverse set of data
+
+133
+00:07:00,782 --> 00:07:03,233
+set, uh, within the one organization itself,
+
+134
+00:07:03,234 --> 00:07:05,884
+right, and definitely across different industries.
+
+135
+00:07:06,241 --> 00:07:08,749
+So, for example, within, let's say, um,
+
+136
+00:07:08,759 --> 00:07:10,966
+finance company, we have documents like,
+
+137
+00:07:10,967 --> 00:07:12,991
+uh, SEC filings. You will have,
+
+138
+00:07:12,992 --> 00:07:15,059
+uh, financial, uh, sheets,
+
+139
+00:07:15,060 --> 00:07:17,415
+right, uh, spreadsheets, and you will have,
+
+140
+00:07:17,416 --> 00:07:19,552
+uh, documents, reports, annual reports,
+
+141
+00:07:19,553 --> 00:07:23,694
+those kind of stuff, right? So, all of them have very different kind of,
+
+142
+00:07:23,695 --> 00:07:26,231
+uh, like data format, and,
+
+143
+00:07:26,232 --> 00:07:29,444
+uh, ideally, we would want, uh, to be able to read all of those
+
+144
+00:07:29,445 --> 00:07:32,480
+things, so that's something, you know, we are building these retrievers for,
+
+145
+00:07:32,890 --> 00:07:35,134
+and knowledge base section for, so again, I'm not going to do that.
+
+146
+00:07:35,800 --> 00:07:38,755
+So, uh,
+
+147
+00:07:38,766 --> 00:07:41,809
+but the important thing is that across all of these things,
+
+148
+00:07:41,810 --> 00:07:45,684
+you need to be able to evaluate which one is working well for your
+
+149
+00:07:46,228 --> 00:07:48,717
+use case for your dataset, right? So,
+
+150
+00:07:48,718 --> 00:07:51,249
+for that, I have built this evaluation system,
+
+151
+00:07:51,250 --> 00:07:54,217
+retriever evaluation system, and for retrieval evaluation,
+
+152
+00:07:54,218 --> 00:07:57,420
+I need a dataset against which to do evaluation,
+
+153
+00:07:57,762 --> 00:07:59,808
+and this basically is a dataset, uh,
+
+154
+00:07:59,819 --> 00:08:03,614
+this video is about how that dataset I am building and,
+
+155
+00:08:03,615 --> 00:08:06,950
+uh, how is it, uh,
+
+156
+00:08:06,961 --> 00:08:08,980
+going to help, right? So,
+
+157
+00:08:11,121 --> 00:08:11,320
+cough cough cough
+
+158
+00:08:16,011 --> 00:08:21,011
+hmm
+
+159
+00:08:21,234 --> 00:08:23,801
+jar boards are great! So these are, basically,
+
+160
+00:08:23,879 --> 00:08:26,361
+what I have done is, I have given it,
+
+161
+00:08:26,362 --> 00:08:28,749
+uh,
+
+162
+00:08:28,759 --> 00:08:31,051
+it starts with the Knowledge base, so I, I have taken,
+
+163
+00:08:31,052 --> 00:08:33,973
+I a small list. I have a list of six documents,
+
+164
+00:08:34,163 --> 00:08:38,524
+so that we can, uh,
+
+165
+00:08:38,525 --> 00:08:41,007
+uh, review it much more easily, but you can do it for larger documents
+
+166
+00:08:41,008 --> 00:08:43,256
+as well, it's just going to take some time, we are going to process
+
+167
+00:08:43,257 --> 00:08:45,714
+all of that. So I have been working with six documents here,
+
+168
+00:08:45,715 --> 00:08:48,000
+these are mostly our own internal, like,
+
+169
+00:08:48,001 --> 00:08:50,638
+uh, internal docs, so I just kept a small number of documents,
+
+170
+00:08:50,639 --> 00:08:53,756
+so I made a small corpus, and I have,
+
+171
+00:08:53,757 --> 00:08:57,530
+uh, so I can create a new generation like this,
+
+172
+00:08:57,531 --> 00:09:00,232
+uh, so this is an existing dataset,
+
+173
+00:09:00,233 --> 00:09:02,827
+you know, with 48 questions, so, uhm,
+
+174
+00:09:02,838 --> 00:09:04,783
+I'll come back to the generation, but it'll be me show you quickly what
+
+175
+00:09:04,784 --> 00:09:07,085
+it is. So, what happens is,
+
+176
+00:09:07,279 --> 00:09:09,575
+within this, uh, uh, generation,
+
+177
+00:09:09,576 --> 00:09:11,893
+I need to create, this is a 48 questions,
+
+178
+00:09:11,894 --> 00:09:15,955
+you know, were, were generated, and there were 6 documents,
+
+179
+00:09:15,956 --> 00:09:18,896
+so what it does is that it goes to each of these documents,
+
+180
+00:09:18,929 --> 00:09:21,775
+and, uhm, and tries to, basically generates a,
+
+181
+00:09:22,276 --> 00:09:26,060
+a question, which we would want to evaluate against,
+
+182
+00:09:26,380 --> 00:09:28,522
+for example, these questions are basically user questions,
+
+183
+00:09:28,618 --> 00:09:32,482
+so, this is one example is how to make the live chat come to
+
+184
+00:09:32,483 --> 00:09:35,089
+my task conversations, right, this is actually user questions,
+
+185
+00:09:35,090 --> 00:09:37,562
+I'll again, go to this new generation I'll talk about,
+
+186
+00:09:37,563 --> 00:09:40,019
+ah, basically here you can add,
+
+187
+00:09:40,147 --> 00:09:44,767
+ahem, as part of new generation you can add some sample questions,
+
+188
+00:09:44,768 --> 00:09:46,787
+right, and you can add as many as you want,
+
+189
+00:09:46,788 --> 00:09:49,037
+you can even upload a CSV, and,
+
+190
+00:09:51,680 --> 00:09:56,724
+it will, will try to find the right match,
+
+191
+00:09:56,944 --> 00:10:02,617
+or the right, ah, uhm, uhm,
+
+192
+00:10:02,628 --> 00:10:07,222
+you can say text snippet out of all the documents in the
+
+193
+00:10:07,223 --> 00:10:09,240
+KB. And it tries to find that,
+
+194
+00:10:09,553 --> 00:10:13,159
+and tries to, basically, uhm,
+
+195
+00:10:13,170 --> 00:10:15,510
+like, associate with that, like, saves it, you know, for that question.
+
+196
+00:10:15,511 --> 00:10:17,690
+And it does that for, for,
+
+197
+00:10:17,691 --> 00:10:19,736
+uhm, all these questions, essentially,
+
+198
+00:10:19,737 --> 00:10:21,775
+right? And if it finds a match,
+
+199
+00:10:22,867 --> 00:10:25,690
+then it will just use this, uhm, this question as it is, and keeps
+
+200
+00:10:25,691 --> 00:10:29,058
+that match as well. So that match is, basically, this span,
+
+201
+00:10:29,059 --> 00:10:32,053
+you can say, right? You can see this has four spans.
+
+202
+00:10:32,054 --> 00:10:34,089
+Four span, basically means it's a character span.
+
+203
+00:10:34,090 --> 00:10:36,417
+So, basically, out of this one document,
+
+204
+00:10:37,016 --> 00:10:39,323
+it has, if you have seen the question, how to make LiveChat compliment all
+
+205
+00:10:39,324 --> 00:10:41,620
+these chatbots. Chatbots are great,
+
+206
+00:10:41,621 --> 00:10:44,093
+but let's face it, they sometimes need human help to deal with this,
+
+207
+00:10:44,094 --> 00:10:48,975
+to address this. We build a Zendesk LiveChat integration that lets your chatbot
+
+208
+00:10:48,976 --> 00:10:51,933
+seamlessly hand off conversation to an agent when user requests it.
+
+209
+00:10:51,934 --> 00:10:54,763
+In this article, we'll cover how to, so this is the part about how
+
+210
+00:10:54,764 --> 00:10:57,577
+our Zendesk LiveChat system works. And, uh, to input these fields,
+
+211
+00:10:57,578 --> 00:11:03,233
+first add, gambit,
+
+212
+00:11:03,234 --> 00:11:05,316
+collect, this, this,
+
+213
+00:11:05,317 --> 00:11:07,518
+this, right? So, you can see,
+
+214
+00:11:07,519 --> 00:11:12,011
+basically it is highlighting the character space.
+
+215
+00:11:12,012 --> 00:11:15,416
+the answer to this question lies,
+
+216
+00:11:15,417 --> 00:11:17,616
+right? So, now it's trying to make a,
+
+217
+00:11:18,323 --> 00:11:20,526
+like a, intelligent guess,
+
+218
+00:11:20,892 --> 00:11:23,214
+but it might not be accurate. And that is why we need a,
+
+219
+00:11:23,215 --> 00:11:25,724
+uh, uh, in the next version of it,
+
+220
+00:11:25,725 --> 00:11:28,107
+I will be making an edit option, where I can edit the,
+
+221
+00:11:28,108 --> 00:11:31,145
+uh, uh, uh,
+
+222
+00:11:31,155 --> 00:11:34,002
+question here and can even edit the span here.
+
+223
+00:11:34,438 --> 00:11:36,826
+And, uh, right now it has access to,
+
+224
+00:11:37,753 --> 00:11:40,914
+it basically gives the span from one document only,
+
+225
+00:11:40,915 --> 00:11:43,579
+but in the future I want to have, where it can give span from
+
+226
+00:11:44,011 --> 00:11:47,843
+multiple documents because if you think about it,
+
+227
+00:11:47,844 --> 00:11:51,808
+this question's answer can belong to multiple documents because LiveChat is a very big
+
+228
+00:11:51,809 --> 00:11:56,344
+feature of our product and it can have a lot of other information,
+
+229
+00:11:56,345 --> 00:11:59,797
+right? So,
+
+230
+00:11:59,798 --> 00:12:02,678
+uh, So,
+
+231
+00:12:02,679 --> 00:12:05,988
+we should have a capability to find all of those things,
+
+232
+00:12:06,068 --> 00:12:09,983
+those options, in a more liberal manner and then allow the user to be
+
+233
+00:12:09,984 --> 00:12:13,602
+able to trim down. I think that will be a good interface.
+
+234
+00:12:13,603 --> 00:12:16,011
+Again, these are like, feature ideas.
+
+235
+00:12:16,012 --> 00:12:18,265
+Make this process easy. Basically, the whole idea behind this,
+
+236
+00:12:18,266 --> 00:12:22,428
+making this dataset, and ideally you want to make a golden dataset of maybe
+
+237
+00:12:22,429 --> 00:12:24,666
+50 questions or 100 questions,
+
+238
+00:12:25,125 --> 00:12:28,813
+ideally more, depending on your question dataset.
+
+239
+00:12:29,165 --> 00:12:33,744
+And spend time on building this dataset so that you can really evaluate
+
+240
+00:12:35,405 --> 00:12:38,786
+how the system is working, how only that system is working.
+
+241
+00:12:40,265 --> 00:12:45,133
+And you can also use this dataset as a caching mechanism
+
+242
+00:12:45,134 --> 00:12:49,668
+as well maybe, so that if you have made these 100 questions,
+
+243
+00:12:49,669 --> 00:12:52,104
+right, corresponding, uhm,
+
+244
+00:12:52,115 --> 00:12:54,143
+character span in the documents,
+
+245
+00:12:54,144 --> 00:12:56,661
+and those are like gold dataset, and you know,
+
+246
+00:12:56,662 --> 00:13:01,714
+okay, those are accurate, and it will only change if the documents' content
+
+247
+00:13:01,715 --> 00:13:04,011
+change, uhm.
+
+248
+00:13:04,012 --> 00:13:06,425
+So, again,
+
+249
+00:13:06,426 --> 00:13:08,678
+there will be other stuff there as well to be looked at,
+
+250
+00:13:09,353 --> 00:13:14,574
+but, uhm, uhm,
+
+251
+00:13:14,585 --> 00:13:18,748
+so you can use that as a caching layer as well.
+
+252
+00:13:18,749 --> 00:13:20,906
+So, if somebody asks a question, you can use that as a question,
+
+253
+00:13:21,247 --> 00:13:23,576
+and it tries to match it against these 100 tests,
+
+254
+00:13:23,577 --> 00:13:26,129
+the question that I said you have, you have, like, manually created.
+
+255
+00:13:26,854 --> 00:13:29,013
+If it matches 20 of them with, uh, let's say,
+
+256
+00:13:29,014 --> 00:13:31,406
+90% accuracy, something like that,
+
+257
+00:13:32,376 --> 00:13:34,891
+then, uhm,
+
+258
+00:13:34,902 --> 00:13:37,631
+it basically picks the same answer but, you know, the exact down-to-earth,
+
+259
+00:13:37,632 --> 00:13:40,122
+essentially, character span that you've configured manually.
+
+260
+00:13:40,683 --> 00:13:42,875
+So that way, it's, uh,
+
+261
+00:13:42,886 --> 00:13:46,191
+like, it's very, uh,
+
+262
+00:13:46,201 --> 00:13:50,801
+I mean, it can increase the, uh, uhm, the accuracy
+
+263
+00:13:50,802 --> 00:13:53,908
+of the test retrieval. Much more dramatically,
+
+264
+00:13:53,909 --> 00:13:57,656
+because now you have a mechanism to improve it as you see problems,
+
+265
+00:13:58,070 --> 00:14:00,139
+so that in the future it's, it's resolved,
+
+266
+00:14:00,553 --> 00:14:03,043
+or even the past as well, it can be resolved as well,
+
+267
+00:14:03,044 --> 00:14:06,540
+if it's not accurate, and you can even go back to the system and,
+
+268
+00:14:06,541 --> 00:14:08,640
+uh, to the user and,
+
+269
+00:14:08,641 --> 00:14:11,469
+and make a correction, here this AI thing was not,
+
+270
+00:14:11,641 --> 00:14:15,157
+not correct, I verified it and this is the most correct answer.
+
+271
+00:14:17,226 --> 00:14:20,115
+So, and you can do that manually, possibly as well,
+
+272
+00:14:20,116 --> 00:14:24,021
+right? And that will be good. So,
+
+273
+00:14:24,022 --> 00:14:28,633
+uhm,
+
+274
+00:14:28,643 --> 00:14:30,571
+so let's take this part one and continue on the part two.
